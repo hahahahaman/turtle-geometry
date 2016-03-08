@@ -9,3 +9,4 @@
                              *project-directory* (pathname "data/fonts/")))
 
 (defglobal *turtle* (empty-map))
+(defglobal *turtle-drawer*)
