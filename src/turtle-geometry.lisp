@@ -52,6 +52,7 @@
       (process-direction-movement *camera* +right+ *dt*)))
 
   (update-program-matrices)
+
   (setf *last-x* *cursor-x*
         *last-y* *cursor-y*)
   (setf *cursor-callback-p* nil
