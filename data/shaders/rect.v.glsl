@@ -1,8 +1,6 @@
 #version 330
 layout (location = 0) in vec2 vertex;
 
-out vec2 TexCoords;
-
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;

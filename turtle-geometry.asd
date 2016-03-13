@@ -10,6 +10,9 @@
   :components ((:file "package")
                (:file "globals")
                (:file "utils")
+               (:file "turtle")
+               (:file "line-drawer")
+               (:file "turtle-drawer")
                (:file "turtle-geometry")
                (:file "main")))
 

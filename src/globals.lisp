@@ -10,3 +10,4 @@
 
 (defglobal *turtle* (empty-map))
 (defglobal *turtle-drawer*)
+(defglobal *line-drawer*)
