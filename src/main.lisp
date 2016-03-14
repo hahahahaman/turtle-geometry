@@ -8,7 +8,7 @@
   (when (key-pressed-p :escape)
     (close-window))
   (handle-camera-input)
-  (when (and (key-pressed-p :left-control)
+  (when (and (key-pressed-p :left-alt)
              (key-action-p :r :press)) 
     (add-event :code (initialize))))
 
@@ -31,7 +31,7 @@
             (color (@ *turtle* :color))
             (rotation (@ *turtle* :rotation)))
         (turtle-draw :position pos
-                     :size (vec3f 2.0 2.0 2.0)
+                     ;; :size (vec3f 2.0 2.0 2.0)
                      :color color
                      :rotation rotation
                      ;; :rotation (vec3f 0.0 0.0 (cfloat (glfw:get-time)))
