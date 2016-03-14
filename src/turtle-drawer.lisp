@@ -11,7 +11,7 @@
       (gl:bind-buffer :array-buffer vbo)
 
       (with-sequence-to-gl-array (verts
-                                  (vector 0.0 0.0 0.0
+                                  (vector 0.0 0.5 0.0
                                           -0.5 -0.5 0.5
                                           0.5 -0.5 0.5
                                           0.5 -0.5 -0.5

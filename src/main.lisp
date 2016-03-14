@@ -10,7 +10,7 @@
   (handle-camera-input)
   (when (and (key-pressed-p :left-control)
              (key-action-p :r :press)) 
-    (initialize)))
+    (add-event :code (initialize))))
 
 (let ((render-timer (make-timer :end (/ 1.0 60.0))))
   (defun render ()
@@ -31,9 +31,10 @@
             (color (@ *turtle* :color))
             (rotation (@ *turtle* :rotation)))
         (turtle-draw :position pos
-                     :size (vec3f 2.0 4.0 1.0)
+                     :size (vec3f 2.0 2.0 2.0)
                      :color color
                      :rotation rotation
+                     ;; :rotation (vec3f 0.0 0.0 (cfloat (glfw:get-time)))
                      :draw-mode :triangle-fan)))))
 
 (let ((update-timer (make-timer :end (/ 1.0 120.0))))

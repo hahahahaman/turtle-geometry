@@ -58,53 +58,59 @@
   (setf *cursor-callback-p* nil
         *scroll-callback-p* nil))
 
-(defun clear ()
-  ;; reset turtle
-  ;; reset line-drawer
-  ;; reset camera
-  (let ((array (draw-array *line-drawer*)))
+(defevent clear ()
+    ;; reset turtle
+    ;; reset line-drawer
+    ;; reset camera
     (setf *turtle* (-> *turtle*
                        (with :position (vec3f 0.0 0.0 0.0))
                        (with :rotation (vec3f 0.0 0.0 0.0)))
-          (fill-pointer array) 0
-          (num-vertices *line-drawer*) 1
-          *camera* (make-init-camera))
-    (add-turtle-data array)))
+          *camera* (make-init-camera)
+          *line-drawer* (make-line-drawer (get-program "line"))))
 
-(defun pen-toggle ())
+(defevent pen-toggle ())
 
-(defun pen-down ())
-(defun pen-up ())
+(defevent pen-down ())
+(defevent pen-up ())
 
-(defun color (vec)
-  (includef *turtle* :color vec))
+(defevent color (vec)
+    (includef *turtle* :color vec))
 
-(defun forward (distance)
-  (let ((new-pos (vec3f (kit.glm:matrix*vec4
-                         (kit.glm:matrix*
-                          (kit.glm:translate (@ *turtle* :position))
-                          (kit.glm:rotate (@ *turtle* :rotation)))
-                         (vec4f distance 1.0)))))
+(defevent forward (distance)
+    (let ((new-pos (vec3f (kit.glm:matrix*vec4
+                           (kit.glm:matrix*
+                            (kit.glm:translate (@ *turtle* :position))
+                            (kit.glm:rotate (@ *turtle* :rotation)))
+                           (vec4f 0.0 distance 0.0 1.0)))))
 
-    ;; move turtle's position
-    (includef *turtle* :position new-pos)
+      ;; move turtle's position
+      (includef *turtle* :position new-pos)
 
-    ;; add new data to drawer if pen-down
-    (when (@ *turtle* :pen-down-p)
-      (incf (num-vertices *line-drawer*))
-      (add-turtle-data (draw-array *line-drawer*)))))
+      ;; add new data to drawer if pen-down
+      (when (@ *turtle* :pen-down-p)
+        (incf (num-vertices *line-drawer*))
+        (add-turtle-data (draw-array *line-drawer*)))))
 
-(defun rotate-turtle (vec)
-  (includef *turtle* :rotation (vec3f+ (@ *turtle* :rotation) vec)))
+(defevent rotate-turtle (vec)
+    (includef *turtle* :rotation (vec3f+ (@ *turtle* :rotation) vec)))
 
-(defun right (radians)
-  ;; rotate turtle around z-axis
-  (rotate-turtle (vec3f 0.0 0.0 radians)))
+(defevent left (radians)
+    ;; rotate turtle around z-axis
+    (rotate-turtle (vec3f 0.0 0.0 (cfloat radians))))
 
-(defun left (radians)
-  ;; same as right in opposite direction
-  (right (- radians)))
+(defevent right (radians)
+    ;; same as right in opposite direction
+    (left (- radians)))
 
-(defun line ()
-  (clear)
-  (forward (vec3f 0.0 10.0 0.0)))
+(defevent square (side-length)
+    (dotimes (x 4)
+      (forward side-length)
+      (right (/ pi 2))))
+
+(defevent circle ()
+    (dotimes (x 360)
+      (forward 1.0)
+      (right (/ pi 180))))
+
+;; (defevent pattern (fn)
+;;     (dotime))
