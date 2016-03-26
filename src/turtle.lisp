@@ -11,7 +11,7 @@
 
 (defun add-turtle-data (array &optional (turtle *turtle*))
   (iter (for i in-vector (@ turtle :position))
-    (vector-push-extend i array))
+    (gl-dyn-push array i))
   (iter (for i in-vector (@ turtle :color))
-    (vector-push-extend i array))
+    (gl-dyn-push array i))
   array)

@@ -133,7 +133,7 @@
   (forward (* 0.5 l)))
 
 (defun thing (fn &rest args)
-  (dotimes (x 10)
+  (dotimes (x 100)
     (apply fn args)
     (right (/ pi 10))
     (forward 2)))

@@ -1,5 +1,6 @@
 (in-package :turtle-geometry)
 
+;; TODO use gl-dynamic-array
 (defclass line-drawer (err:drawer)
   ((vbo
     :accessor vbo
@@ -12,21 +13,16 @@
     :initarg :num-vertices))
   (:default-initargs
    :vbo (gl:gen-buffer)
-   :draw-array (make-array 0
-                           :element-type 'single-float
-                           :adjustable t
-                           :fill-pointer 0)
+   :draw-array nil
    :num-vertices 0))
 
 (defmethod initialize-instance :after ((drawer line-drawer) &key)
-  (with-slots (vbo) drawer
+  (with-slots (vbo draw-array) drawer
     (trivial-garbage:finalize drawer (lambda () (gl:delete-buffers (vector vbo))))))
 
 (defun make-line-drawer (program &optional (turtle *turtle*))
-  (let ((array (make-array 0
-                           :element-type 'single-float
-                           :adjustable t
-                           :fill-pointer 0)))
+  (let ((array (make-instance 'gl-dynamic-array :array-type :float
+                                                :capacity 10000)))
 
     (add-turtle-data array turtle)
     (make-instance 'line-drawer :program program
@@ -48,8 +44,10 @@
     (gl:enable-vertex-attrib-array 1)
     (gl:vertex-attrib-pointer 1 4 :float nil (sizeof* :float 7) (sizeof* :float 3))
 
-    (with-sequence-to-gl-array (verts draw-array :float)
-      (gl:buffer-data :array-buffer :dynamic-draw verts))
+    (with-slots (gl-array array-size) draw-array
+      ;; (print gl-array)
+      (gl:buffer-data :array-buffer :dynamic-draw gl-array
+                                    :size (gl-dyn-array-byte-size draw-array)))
 
     (gl:draw-arrays :line-strip 0 num-vertices)
 
