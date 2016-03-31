@@ -68,10 +68,16 @@
         *camera* (make-init-camera)
         *line-drawer* (make-line-drawer (get-program "line"))))
 
-(defevent pen-toggle ())
+(defevent pen-toggle ()
+  (includef *turtle* :pen-down-p (not (@ *turtle* :pen-down-p))))
 
-(defevent pen-down ())
-(defevent pen-up ())
+(defun pen-down ()
+  (unless (@ *turtle* :pen-down-p)
+    (pen-toggle)))
+
+(defun pen-up ()
+  (when (@ *turtle* :pen-down-p)
+    (pen-toggle)))
 
 (defevent color (vec)
   (includef *turtle* :color (vec4f vec)))
@@ -91,6 +97,9 @@
       (incf (num-vertices *line-drawer*))
       (add-turtle-data (draw-array *line-drawer*)))))
 
+(defun back (dist)
+  (forward (- dist)))
+
 (defevent rotate-turtle (vec)
   (includef *turtle* :rotation (vec3f+ (@ *turtle* :rotation) vec)))
 
@@ -107,13 +116,31 @@
     (forward side-length)
     (right (/ pi 2))))
 
-(defun circle (radius)
-  (let* ((sides 30)
-         (circumference (* 2 radius pi))
-         (side-length (/ circumference sides)))
+(defun ngon (sides radius)
+  (let* ((perimeter (* 2 radius pi))
+         (side-length (/ perimeter sides)))
     (dotimes (x sides)
       (forward side-length)
       (right (/ (* 2 pi) sides)))))
+
+(defun circle (radius)
+  (ngon 30 radius))
+
+(defun arcr (radius radians)
+  (let* ((perimeter (* radius radians)) 
+         (degrees (round (/ (* radians 180) pi)))
+         (side-length (/ perimeter degrees)))
+    (dotimes (x degrees)
+      (forward side-length)
+      (right (/ radians degrees)))))
+
+(defun arcl (radius radians)
+  (let* ((perimeter (* radius radians)) 
+         (degrees (round (/ (* radians 180) pi)))
+         (side-length (/ perimeter degrees)))
+    (dotimes (x degrees)
+      (forward side-length)
+      (left (/ radians degrees)))))
 
 (defun squiggle (l)
   (forward l)
@@ -123,9 +150,9 @@
   (forward (* 0.5 l))
   (right (/ pi 2))
   (forward (* 0.5 l))
-  ;; (right (/ pi 2))
-  ;; (forward l)
-  ;; (right (/ pi 2))
+  (right (/ pi 2))
+  (forward l)
+  (right (/ pi 2))
   (forward (* 0.25 l))
   (right (/ pi 2))
   (forward (* 0.25 l))

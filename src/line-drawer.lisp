@@ -1,6 +1,5 @@
 (in-package :turtle-geometry)
 
-;; TODO use gl-dynamic-array
 (defclass line-drawer (err:drawer)
   ((vbo
     :accessor vbo
