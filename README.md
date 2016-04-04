@@ -1,1 +1,1 @@
-This is the stub README.md for the "turtle-geometry" project.
+Logo/Turtle graphics system for Common Lisp.
