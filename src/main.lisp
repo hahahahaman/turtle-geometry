@@ -34,7 +34,6 @@
                      ;; :size (vec3f 2.0 2.0 2.0)
                      :color color
                      :rotation rotation
-                     ;; :rotation (vec3f 0.0 0.0 (cfloat (glfw:get-time)))
                      :draw-mode :triangle-fan)))))
 
 (let ((update-timer (make-timer :end (/ 1.0 120.0))))

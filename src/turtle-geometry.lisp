@@ -101,7 +101,7 @@
   (forward (- dist)))
 
 (defevent rotate-turtle (vec)
-  (includef *turtle* :rotation (vec3f+ (@ *turtle* :rotation) vec)))
+    (includef *turtle* :rotation (vec3f+ (@ *turtle* :rotation) vec)))
 
 (defun left (radians)
   ;; rotate turtle around z-axis
@@ -110,60 +110,3 @@
 (defun right (radians)
   ;; same as right in opposite direction
   (left (- radians)))
-
-(defun square (side-length)
-  (dotimes (x 4)
-    (forward side-length)
-    (right (/ pi 2))))
-
-(defun ngon (sides radius)
-  (let* ((perimeter (* 2 radius pi))
-         (side-length (/ perimeter sides)))
-    (dotimes (x sides)
-      (forward side-length)
-      (right (/ (* 2 pi) sides)))))
-
-(defun circle (radius)
-  (ngon 30 radius))
-
-(defun arcr (radius radians)
-  (let* ((perimeter (* radius radians)) 
-         (degrees (round (/ (* radians 180) pi)))
-         (side-length (/ perimeter degrees)))
-    (dotimes (x degrees)
-      (forward side-length)
-      (right (/ radians degrees)))))
-
-(defun arcl (radius radians)
-  (let* ((perimeter (* radius radians)) 
-         (degrees (round (/ (* radians 180) pi)))
-         (side-length (/ perimeter degrees)))
-    (dotimes (x degrees)
-      (forward side-length)
-      (left (/ radians degrees)))))
-
-(defun squiggle (l)
-  (forward l)
-  (right (/ pi 2))
-  (forward l)
-  (right (/ pi 2))
-  (forward (* 0.5 l))
-  (right (/ pi 2))
-  (forward (* 0.5 l))
-  (right (/ pi 2))
-  (forward l)
-  (right (/ pi 2))
-  (forward (* 0.25 l))
-  (right (/ pi 2))
-  (forward (* 0.25 l))
-  (right (/ pi 2))
-  (forward (* 0.5 l)))
-
-(defun thing (fn &rest args)
-  (dotimes (x 100)
-    (apply fn args)
-    (right (/ pi 10))
-    (forward 2)))
-
-;; (defevent pattern (fn)
-;;     (dotime))

@@ -41,7 +41,26 @@
                       (drawer *turtle-drawer*))
   (with-slots (vao program) drawer
     (gl:use-program (id program))
-    (let ((model (make-model-matrix-in-draw-function)))
+    (let ((model (kit.glm:matrix*
+
+                  ;; move into position
+                  (kit.glm:translate position)
+
+                  ;; move to draw center
+                  (kit.glm:translate (vec3f-mul size (vec3f* draw-center -1.0)))
+
+                  ;; move back from rotation center
+                  (kit.glm:translate (vec3f-mul rotation-center size))
+
+                  ;; perform rotation
+                  (kit.glm:rotate rotation)
+
+                  ;; move to rotation center
+                  (kit.glm:translate (vec3f* (vec3f-mul rotation-center size)
+                                             -1.0))
+
+                  ;; scale first
+                  (kit.glm:scale size))))
       (gl:uniform-matrix-4fv (get-uniform program "model") model nil))
     (gl:uniformfv (get-uniform program "color") color)
     (gl:bind-vertex-array vao)
