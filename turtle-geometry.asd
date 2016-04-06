@@ -14,6 +14,7 @@
                (:file "line-drawer")
                (:file "turtle-drawer")
                (:file "turtle-geometry")
+               (:file "shapes")
                (:file "main")))
 
 (asdf:defsystem #:turtle-geometry.tests
