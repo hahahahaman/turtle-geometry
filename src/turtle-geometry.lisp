@@ -5,8 +5,18 @@
 ;;; "turtle-geometry" goes here. Hacks and glory await!
 
 (defun update-program-matrices ()
-  (set-program-matrices (get-program "turtle"))
-  (set-program-matrices (get-program "line")))
+  (let ((matrix (kit.glm:perspective-matrix
+                 (kit.glm:deg-to-rad (zoom *camera*))
+                 (/ *width* *height*)
+                 0.1
+                 10000.0)))
+    (set-program-matrices (get-program "turtle") :projection matrix)
+    (set-program-matrices (get-program "line") :projection matrix)))
+
+(defun make-init-camera ()
+  (make-instance 'camera :position (vec3f 0.0 0.0 100.0)
+                         :movement-speed 50.0
+                         :mouse-sensitivity 0.1))
 
 (defun init-turtle-geometry ()
   (let ((line-program (make-program
@@ -14,23 +24,23 @@
                        (file-in-dir *shader-directory* "line.f.glsl")))
         (turtle-program (make-program
                          (file-in-dir *shader-directory* "basic.v.glsl")
-                         (file-in-dir *shader-directory* "basic.f.glsl"))))
+                         (file-in-dir *shader-directory* "basic.f.glsl")))
+        (perspective-matrix (kit.glm:perspective-matrix
+                             (kit.glm:deg-to-rad (zoom *camera*))
+                             (/ *width* *height*)
+                             0.1
+                             10000.0)))
 
     (load-program "turtle" turtle-program)
     (load-program "line" line-program)
 
-    (set-program-matrices turtle-program)
-    (set-program-matrices line-program)
+    (set-program-matrices turtle-program :projection perspective-matrix)
+    (set-program-matrices line-program :projection perspective-matrix)
 
     (setf *turtle* (make-turtle)
           *turtle-drawer* (make-turtle-drawer turtle-program)
           *line-drawer* (make-line-drawer line-program)
           *camera* (make-init-camera))))
-
-(defun make-init-camera ()
-  (make-instance 'camera :position (vec3f 0.0 0.0 100.0)
-                         :movement-speed 50.0
-                         :mouse-sensitivity 0.1))
 
 (defun handle-camera-input ()
   (when (key-pressed-p :left-control)
