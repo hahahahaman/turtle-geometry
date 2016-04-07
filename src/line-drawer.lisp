@@ -21,7 +21,8 @@
 
 (defun make-line-drawer (program &optional (turtle *turtle*))
   (let ((array (make-instance 'gl-dynamic-array :array-type :float
-                                                :capacity 10000)))
+                                                :capacity 10000
+                                                :multiplier 10)))
 
     (add-turtle-data array turtle)
     (make-instance 'line-drawer :program program
