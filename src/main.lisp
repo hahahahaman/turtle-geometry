@@ -45,6 +45,8 @@
 (defun cleanup ())
 
 (defun run ()
+  (setf *width* 800
+        *height* 600)
   (err-run "turtle geometry"
            :init-code (initialize)
            :input-code (handle-input)
