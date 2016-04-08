@@ -136,7 +136,7 @@ geometry are readily modified in many ways. |#
   (dotimes (x 360)
     (forward side)
     (right angle)
-    (petal side)
+    (forward side)
     (right (* angle 0.5))))
 
 (defun newpoly1 (size angle)
@@ -163,3 +163,46 @@ geometry are readily modified in many ways. |#
       (right angle)
       (petal n)
       (right (* angle 2)))))
+
+#| Recursive definitions of shapes show a form of sameness (symmetry?) in the
+object. |#
+
+(defun recursive-poly (side angle)
+  (let ((end 360))
+    (labels ((poly-iter (n)
+               (unless (= n end)
+                 (forward side)
+                 (right angle)
+                 (poly-iter (1+ n)))))
+      (poly-iter 0))))
+
+
+;; forms an outward spiral
+(defun polyspi-side (side angle)
+  (let ((end 50))
+    (labels ((it (s a n)
+               (unless (= n end)
+                 (forward s)
+                 (right a)
+                 (it (+ s side) a (1+ n)))))
+      (it side angle 0))))
+
+;; forms an inward spiral
+(defun polyspi-angle (side angle)
+  (let ((end 50)
+        (deg1 (/ pi 180)))
+    (labels ((it (side angle n)
+               (unless (= n end)
+                 (forward side)
+                 (right angle)
+                 (it side (- angle deg1) (1+ n)))))
+      (it side angle 0))))
+
+;; (defun polyspi (side angle)
+;;   (let ((end 100))
+;;     (labels ((it (side angle n)
+;;                (unless (= n end)
+;;                  (forward side)
+;;                  (right angle)
+;;                  (it side angle (1+ n)))))
+;;       (it side angle 0))))
