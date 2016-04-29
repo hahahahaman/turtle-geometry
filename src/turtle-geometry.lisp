@@ -61,12 +61,7 @@
     (when (key-pressed-p :d)
       (process-direction-movement *camera* +right+ *dt*)))
 
-  (update-program-matrices)
-
-  (setf *last-x* *cursor-x*
-        *last-y* *cursor-y*)
-  (setf *cursor-callback-p* nil
-        *scroll-callback-p* nil))
+  (update-program-matrices))
 
 (defevent clear ()
   ;; reset turtle
