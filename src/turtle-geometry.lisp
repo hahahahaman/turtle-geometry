@@ -63,7 +63,7 @@
 
   (update-program-matrices))
 
-(defevent clear ()
+(defun clear ()
   ;; reset turtle
   ;; reset line-drawer
   ;; reset camera
@@ -73,7 +73,7 @@
         *camera* (make-init-camera)
         *line-drawer* (make-line-drawer (get-program "line"))))
 
-(defevent pen-toggle ()
+(defun pen-toggle ()
   (includef *turtle* :pen-down-p (not (@ *turtle* :pen-down-p))))
 
 (defun pen-down ()
@@ -84,10 +84,10 @@
   (when (@ *turtle* :pen-down-p)
     (pen-toggle)))
 
-(defevent color (vec)
+(defun color (vec)
   (includef *turtle* :color (vec4f vec)))
 
-(defevent forward (distance)
+(defun forward (distance)
   (let ((new-pos (vec3f (kit.glm:matrix*vec4
                          (kit.glm:matrix*
                           (kit.glm:translate (@ *turtle* :position))
@@ -105,8 +105,8 @@
 (defun back (dist)
   (forward (- dist)))
 
-(defevent rotate-turtle (vec)
-    (includef *turtle* :rotation (vec3f+ (@ *turtle* :rotation) vec)))
+(defun rotate-turtle (vec)
+  (includef *turtle* :rotation (vec3f+ (@ *turtle* :rotation) vec)))
 
 (defun left (radians)
   ;; rotate turtle around z-axis
