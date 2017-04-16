@@ -1,7 +1,6 @@
 ## Turtle Geometry
 
-[Logo](https://en.wikipedia.org/wiki/Logo_(programming_language)
-functionality in Common Lisp.
+[Logo](https://en.wikipedia.org/wiki/Logo_(programming_language)) functionality in Common Lisp.
 
 ## Credit
 
