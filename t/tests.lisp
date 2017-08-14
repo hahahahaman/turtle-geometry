@@ -7,6 +7,13 @@
 (defun run-all-tests ())
 
 ;;; Hooking into ASDF
+#|
+To run:
+
+(ql:quickload :turtle-geometry.tests)
+(asdf:perform :test-op :turtle-geometry.tests)
+
+|#
 (defmethod asdf:perform ((o asdf:test-op)
                          (c (eql (asdf:find-system :turtle-geometry.tests))))
   (format t "~2&*******************~@

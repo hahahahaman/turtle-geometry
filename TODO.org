@@ -1,0 +1,3 @@
+* TODO port from glfw3 to sdl2
+** TODO switch the stuff in the main loop
+** TODO figure out how to use opengl with sdl2

@@ -1,10 +1,21 @@
 ;;;; turtle-geometry.asd
 
 (asdf:defsystem #:turtle-geometry
-  :description "Describe turtle-geometry here"
-  :author "Name <your@email.com>"
-  :license "Licenceless Rider"
-  :depends-on (#:err)
+  :description "Logo in Common Lisp"
+  :author "hahahahaman <hahahadude@gmail.com>"
+  :license "MIT"
+  :depends-on (#:alexandria
+               #:bordeaux-threads
+               #:iterate
+               #:cl-fad
+               #:cl-opengl
+               #:glkit
+               #:sdl2
+               #:sdl2-ttf
+               #:trivial-garbage
+               #:trivial-main-thread
+               #:defenum
+               #:ironclad)
   :serial t
   :pathname "src/"
   :components ((:file "package")
@@ -18,11 +29,10 @@
                (:file "main")))
 
 (asdf:defsystem #:turtle-geometry.tests
-  :description "Describe turtle-geometry.tests here"
-  :author "Name <your@email.com>"
-  :license "Licenceless Rider"
-  :depends-on (#:err
-               #:turtle-geometry
+  :description "turtle-geometry.tests"
+  :author "hahahahaman <hahahadude@gmail.com>"
+  :license "MIT"
+  :depends-on (#:turtle-geometry
                #:simple-testing)
   :serial t
   :pathname "t/"
