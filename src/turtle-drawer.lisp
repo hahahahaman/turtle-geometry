@@ -1,6 +1,6 @@
 (in-package :turtle-geometry)
 
-(defclass turtle-drawer (err:drawer)
+(defclass turtle-drawer (drawer)
   ())
 
 (defmethod initialize-instance :after ((drawer turtle-drawer) &key)

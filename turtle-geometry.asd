@@ -9,9 +9,11 @@
                #:iterate
                #:cl-fad
                #:cl-opengl
+               #:fset
                #:glkit
                #:sdl2
                #:sdl2-ttf
+               #:sdl2kit
                #:trivial-garbage
                #:trivial-main-thread
                #:defenum
@@ -20,10 +22,20 @@
   :pathname "src/"
   :components ((:file "package")
                (:file "globals")
+               (:file "timer")
+               (:file "vec")
+               (:file "gl-dynamic-array")
                (:file "utils")
+               (:file "event")
+               (:file "input")
+               (:file "program")
+               (:file "resource-manager")
+               (:file "program-manager")
                (:file "turtle")
+               (:file "drawer")
                (:file "line-drawer")
                (:file "turtle-drawer")
+               (:file "camera")
                (:file "turtle-geometry")
                (:file "shapes")
                (:file "main")))

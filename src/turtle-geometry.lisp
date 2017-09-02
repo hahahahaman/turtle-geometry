@@ -18,32 +18,8 @@
                          :movement-speed 50.0
                          :mouse-sensitivity 0.1))
 
-(defun init-turtle-geometry ()
-  (let ((line-program (make-program
-                       (file-in-dir *shader-directory* "line.v.glsl")
-                       (file-in-dir *shader-directory* "line.f.glsl")))
-        (turtle-program (make-program
-                         (file-in-dir *shader-directory* "basic.v.glsl")
-                         (file-in-dir *shader-directory* "basic.f.glsl")))
-        (perspective-matrix (kit.glm:perspective-matrix
-                             (kit.glm:deg-to-rad (zoom *camera*))
-                             (/ *width* *height*)
-                             0.1
-                             10000.0)))
-
-    (load-program "turtle" turtle-program)
-    (load-program "line" line-program)
-
-    (set-program-matrices turtle-program :projection perspective-matrix)
-    (set-program-matrices line-program :projection perspective-matrix)
-
-    (setf *turtle* (make-turtle)
-          *turtle-drawer* (make-turtle-drawer turtle-program)
-          *line-drawer* (make-line-drawer line-program)
-          *camera* (make-init-camera))))
-
 (defun handle-camera-input ()
-  (when (key-pressed-p :left-control)
+  (when (key-pressed-p :scancode-lctrl)
     (when *cursor-callback-p*
       (let ((x-offset (cfloat (- *cursor-x* *last-x*)))
             (y-offset (cfloat (- *last-y* *cursor-y*))))
@@ -52,13 +28,13 @@
     (when *scroll-callback-p*
       (process-scroll-movement *camera* (cfloat *scroll-y*))) 
 
-    (when (key-pressed-p :w)
+    (when (key-pressed-p :scancode-w)
       (process-direction-movement *camera* +forward+ *dt*))
-    (when (key-pressed-p :s)
+    (when (key-pressed-p :scancode-s)
       (process-direction-movement *camera* +backward+ *dt*))
-    (when (key-pressed-p :a)
+    (when (key-pressed-p :scancode-a)
       (process-direction-movement *camera* +left+ *dt*))
-    (when (key-pressed-p :d)
+    (when (key-pressed-p :scancode-d)
       (process-direction-movement *camera* +right+ *dt*)))
 
   (update-program-matrices))

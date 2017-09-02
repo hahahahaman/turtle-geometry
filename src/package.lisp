@@ -1,5 +1,5 @@
 (defpackage #:turtle-geometry
-  (:use #:cl #:err #:iterate #:fset)
+  (:use #:cl #:iterate #:fset #:kit.sdl2)
   (:shadowing-import-from :iterate #:iter #:while)
   (:shadowing-import-from :fset
                           ;; Shadowed type/constructor names

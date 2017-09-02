@@ -1,6 +1,6 @@
 (in-package :turtle-geometry)
 
-(defclass line-drawer (err:drawer)
+(defclass line-drawer (drawer)
   ((vbo
     :accessor vbo
     :initarg :vbo)
