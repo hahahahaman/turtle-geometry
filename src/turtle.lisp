@@ -1,6 +1,6 @@
 (in-package #:turtle-geometry)
 
-(defun make-turtle (&optional
+(defun make-turtle (&key
                       (position (vec3f 0.0 0.0 0.0))
                       (rotation (vec3f 0.0 0.0 0.0))
                       (color (vec4f 1.0 1.0 1.0 1.0)))
