@@ -131,7 +131,11 @@
 (defmethod window-event ((window game-window) (type (eql :resized)) ts data1 data2)
   ;; need to adjust the camera
 
-  ;; (format t "type: ~A, data1: ~A, data2: ~A ~%" type data1 data2)
+  (format t "type: ~A, data1: ~A, data2: ~A ~%" type data1 data2)
+  (setf *width* data1
+        *height* data2)
+
+  (gl:viewport 0 0 *width* *height*)
   )
 
 (defmethod window-event :after ((window game-window) type ts data1 data2)
