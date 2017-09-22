@@ -2,8 +2,10 @@
 
 ![system setup](./pics/system.png "System setup.")
 
-[Logo](https://en.wikipedia.org/wiki/Logo_(programming_language)
-functionality in Common Lisp. Inspired by the book [Turtle Geometry](https://www.amazon.com/Turtle-Geometry-Mathematics-Artificial-Intelligence/dp/0262510375). 
+[Logo](https://en.wikipedia.org/wiki/Logo_(programming_language))
+functionality in Common Lisp. Inspired by the
+book
+[Turtle Geometry](https://www.amazon.com/Turtle-Geometry-Mathematics-Artificial-Intelligence/dp/0262510375).
 
 ### Usage
 
