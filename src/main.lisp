@@ -109,16 +109,29 @@
 
 
   ;; get camera to directly face the turtle
-  (when(key-pressed-p :scancode-tab)
+  (when (and (key-pressed-p :scancode-tab)
+             (key-pressed-p :scancode-lshift))
+    (let ((tpos (@ *turtle* :position)))
+      (with-slots (position yaw pitch front) *camera*
+        (setf (x-val position) (x-val tpos)
+              (y-val position) (y-val tpos)))))
+
+  (when (key-pressed-p :scancode-tab)
     (let ((tpos (@ *turtle* :position)))
       (with-slots (position yaw pitch front) *camera*
         (setf
          front (kit.glm:normalize (vec3f- tpos position))
          pitch (kit.glm:rad-to-deg (asin (y-val front)))
-         yaw (- (kit.glm:rad-to-deg
+         yaw (* (signum (z-val front))
+                (kit.glm:rad-to-deg
                  (realpart (acos (/ (x-val front)
                                     (cos (kit.glm:deg-to-rad
                                           pitch)))))))))))
+
+  (when (key-pressed-p :scancode-e)
+    (with-slots (yaw pitch front) *camera*
+      (format t "~A ~A ~A~%" front yaw pitch)))
+  
 
   (when (key-pressed-p :scancode-escape)
     (close-window window))
@@ -143,6 +156,8 @@
          (setf *cursor-x* x
                *cursor-y* y
                *cursor-callback-p* t)))
+  ;; (with-slots (yaw pitch front) *camera*
+  ;;   (format t "~A ~A ~A~%" front yaw pitch))
   )
 
 (defmethod mousewheel-event ((window game-window) ts x y)
