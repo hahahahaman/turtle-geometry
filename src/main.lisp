@@ -108,14 +108,17 @@
            (setf (getf *key-pressed* scancode) nil))))
 
 
-  ;; need to get camera to face the turtle
+  ;; get camera to directly face the turtle
   (when(key-pressed-p :scancode-tab)
     (let ((tpos (@ *turtle* :position)))
-      (with-slots (position) *camera*
-        (setf (x-val position) (x-val tpos)
-              (y-val position) (y-val tpos)
-              ;; (z-val position) (z-val tpos)
-              ))))
+      (with-slots (position yaw pitch front) *camera*
+        (setf
+         front (kit.glm:normalize (vec3f- tpos position))
+         pitch (kit.glm:rad-to-deg (asin (y-val front)))
+         yaw (- (kit.glm:rad-to-deg
+                 (realpart (acos (/ (x-val front)
+                                    (cos (kit.glm:deg-to-rad
+                                          pitch)))))))))))
 
   (when (key-pressed-p :scancode-escape)
     (close-window window))
@@ -139,10 +142,11 @@
         (t
          (setf *cursor-x* x
                *cursor-y* y
-               *cursor-callback-p* t))))
+               *cursor-callback-p* t)))
+  )
 
 (defmethod mousewheel-event ((window game-window) ts x y)
-  (format t "mousewheel: ~A ~A ~A ~A~%" x y *scroll-x* *scroll-y*)
+  ;; (format t "mousewheel: ~A ~A ~A ~A~%" x y *scroll-x* *scroll-y*)
   (setf *scroll-callback-p* t
         *scroll-x* x
         *scroll-y* y))
