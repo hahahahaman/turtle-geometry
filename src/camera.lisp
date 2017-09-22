@@ -90,11 +90,9 @@
 
 (defmethod process-scroll-movement ((cam camera) y)
   (with-slots (zoom mouse-sensitivity) cam
-    (if (and (>= zoom 1.0) (<= zoom 45.0))
-        (decf zoom y)
-        (if (<= zoom 1.0)
-            (setf zoom 1.0)
-            (setf zoom 45.0)))))
+    (when (and (>= (- zoom y) 1)
+               (<= (- zoom y) 45))
+      (decf zoom y))))
 
 (defmethod update-camera-vectors ((cam camera))
   (with-slots (yaw pitch right up front world-up) cam

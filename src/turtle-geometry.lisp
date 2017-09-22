@@ -18,27 +18,6 @@
                          :movement-speed 50.0
                          :mouse-sensitivity 0.1))
 
-(defun handle-camera-input ()
-  (when (key-pressed-p :scancode-lctrl)
-    (when *cursor-callback-p*
-      (let ((x-offset (cfloat (- *cursor-x* *last-x*)))
-            (y-offset (cfloat (- *last-y* *cursor-y*))))
-        (process-rotation-movement *camera* x-offset y-offset)))
-
-    (when *scroll-callback-p*
-      (process-scroll-movement *camera* (cfloat *scroll-y*))) 
-
-    (when (key-pressed-p :scancode-w)
-      (process-direction-movement *camera* +forward+ *dt*))
-    (when (key-pressed-p :scancode-s)
-      (process-direction-movement *camera* +backward+ *dt*))
-    (when (key-pressed-p :scancode-a)
-      (process-direction-movement *camera* +left+ *dt*))
-    (when (key-pressed-p :scancode-d)
-      (process-direction-movement *camera* +right+ *dt*)))
-
-  (update-program-matrices))
-
 (defun clear ()
   ;; reset turtle
   ;; reset line-drawer

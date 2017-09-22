@@ -50,8 +50,8 @@ input
 (defglobal *scroll-callback-p* nil)
 
 ;; number of ticks of the scroll wheel
-(defglobal *scroll-x* (/ *width* 2.0))
-(defglobal *scroll-y* (/ *height* 2.0))
+(defglobal *scroll-x* 0.0)
+(defglobal *scroll-y* 0.0)
 
 #|
 time-travel

@@ -63,6 +63,28 @@
 
 (defupdate update 200.0)
 
+
+(defun handle-camera-input ()
+  (when (key-pressed-p :scancode-lctrl)
+    (when *cursor-callback-p*
+      (let ((x-offset (cfloat (- *cursor-x* *last-x*)))
+            (y-offset (cfloat (- *last-y* *cursor-y*))))
+        (process-rotation-movement *camera* x-offset y-offset)))
+
+    (when *scroll-callback-p*
+      (process-scroll-movement *camera* (cfloat *scroll-y*))) 
+
+    (when (key-pressed-p :scancode-w)
+      (process-direction-movement *camera* +forward+ *dt*))
+    (when (key-pressed-p :scancode-s)
+      (process-direction-movement *camera* +backward+ *dt*))
+    (when (key-pressed-p :scancode-a)
+      (process-direction-movement *camera* +left+ *dt*))
+    (when (key-pressed-p :scancode-d)
+      (process-direction-movement *camera* +right+ *dt*)))
+
+  (update-program-matrices))
+
 (defmethod render ((window game-window))
   (handle-camera-input)
   (render-lines)
@@ -71,11 +93,6 @@
 
   (update-events)
   (update-globals))
-
-(defmethod mousewheel-event ((window game-window) ts x y)
-  (setf *scroll-callback-p* t
-        *scroll-x* x
-        *scroll-y* y))
 
 (defmethod keyboard-event ((window game-window) state ts repeat-p keysym)
   (let ((scancode (sdl2:scancode keysym)))
@@ -90,6 +107,15 @@
           ((eq state :keyup)
            (setf (getf *key-pressed* scancode) nil))))
 
+
+  ;; need to get camera to face the turtle
+  (when(key-pressed-p :scancode-tab)
+    (let ((tpos (@ *turtle* :position)))
+      (with-slots (position) *camera*
+        (setf (x-val position) (x-val tpos)
+              (y-val position) (y-val tpos)
+              ;; (z-val position) (z-val tpos)
+              ))))
 
   (when (key-pressed-p :scancode-escape)
     (close-window window))
@@ -115,6 +141,11 @@
                *cursor-y* y
                *cursor-callback-p* t))))
 
+(defmethod mousewheel-event ((window game-window) ts x y)
+  (format t "mousewheel: ~A ~A ~A ~A~%" x y *scroll-x* *scroll-y*)
+  (setf *scroll-callback-p* t
+        *scroll-x* x
+        *scroll-y* y))
 
 (defmethod textinput-event :after ((window game-window) ts text)
   ;; (when (string= "Q" (string-upcase text))

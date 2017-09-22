@@ -2,15 +2,16 @@
 
 [Logo](https://en.wikipedia.org/wiki/Logo_(programming_language)) functionality in Common Lisp.
 
-Currently uses sdl2 and OpenGL.
+Currently uses SDL2 and OpenGL.
 
 Ideas from Turtle Geometry by Harold Abelson and Andrea diSessa.
 
 ## Usage
 
--Clone the git repo.
--
--
+The interface is a hybrid graphical text interface. A graphical
+windows is created with SDL2, and using Emacs and Slime, the Logo
+commands are inputted.
+
 
 #### License
 
