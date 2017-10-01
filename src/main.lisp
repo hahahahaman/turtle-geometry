@@ -1,6 +1,6 @@
 (in-package #:turtle-geometry)
 
-(defclass game-window (sdl2.kit:gl-window)
+(defclass turtle-window (sdl2.kit:gl-window)
   ((start-time :initform (get-internal-real-time))
    (one-frame-time :initform (get-internal-real-time))
    (frames :initform 0)))
@@ -30,8 +30,7 @@
     (set-program-matrices turtle-program :projection perspective-matrix)
     (set-program-matrices line-program :projection perspective-matrix)))
 
-
-(defmethod initialize-instance :after ((w game-window) &key &allow-other-keys)
+(defmethod initialize-instance :after ((w turtle-window) &key &allow-other-keys)
   (setf (kit.sdl2:idle-render w) t)
   (initialize-globals)
   (init-turtle-geometry)
@@ -40,7 +39,7 @@
   (gl:blend-func :src-alpha :one-minus-src-alpha)
   (gl:clear-color 1.0 1.0 1.0 1.0)
   (gl:clear :color-buffer-bit :depth-buffer-bit)
-  (format t "Game window initialized.~%"))
+  (format t "Turtle window initialized.~%"))
 
 (defrender render-lines 200.0
   ;; (gl:line-width 1.0)
@@ -85,7 +84,7 @@
 
   (update-program-matrices))
 
-(defmethod render ((window game-window))
+(defmethod render ((window turtle-window))
   (handle-camera-input)
   (render-lines)
 
@@ -94,7 +93,7 @@
   (update-events)
   (update-globals))
 
-(defmethod keyboard-event ((window game-window) state ts repeat-p keysym)
+(defmethod keyboard-event ((window turtle-window) state ts repeat-p keysym)
   (let ((scancode (sdl2:scancode keysym)))
     ;; (format t "state: ~A, ts: ~A, repeat-p: ~A, keysym: ~A~%" state ts repeat-p scancode)
 
@@ -137,9 +136,9 @@
     (close-window window))
   (when (and (key-pressed-p :scancode-lalt)
              (key-action-p :scancode-r :keydown))
-    (init-turtle-geometry)))
+    (clear)))
 
-(defmethod mousebutton-event ((window game-window) state ts b x y)
+(defmethod mousebutton-event ((window turtle-window) state ts b x y)
   ;; (format t "~A button: ~A at ~A, ~A~%" state b x y)
 
   (setf (getf *mouse-button-actions* b) state)
@@ -148,7 +147,7 @@
         ((eq state :mousebuttonup)
          (setf (getf *mouse-button-pressed* b) nil))))
 
-(defmethod mousemotion-event ((window game-window) ts mask x y xr yr)
+(defmethod mousemotion-event ((window turtle-window) ts mask x y xr yr)
   (cond (*first-mouse* (setf *last-x* x
                              *last-y* y
                              *first-mouse* nil))
@@ -160,13 +159,13 @@
   ;;   (format t "~A ~A ~A~%" front yaw pitch))
   )
 
-(defmethod mousewheel-event ((window game-window) ts x y)
+(defmethod mousewheel-event ((window turtle-window) ts x y)
   ;; (format t "mousewheel: ~A ~A ~A ~A~%" x y *scroll-x* *scroll-y*)
   (setf *scroll-callback-p* t
         *scroll-x* x
         *scroll-y* y))
 
-(defmethod textinput-event :after ((window game-window) ts text)
+(defmethod textinput-event :after ((window turtle-window) ts text)
   ;; (when (string= "Q" (string-upcase text))
   ;;   (close-window window))
   )
@@ -174,11 +173,11 @@
 (defun cleanup ()
   (format t "Bye!~%"))
 
-(defmethod close-window ((w game-window))
+(defmethod close-window ((w turtle-window))
   (cleanup)
   (call-next-method))
 
-(defmethod window-event ((window game-window) (type (eql :resized)) ts data1 data2)
+(defmethod window-event ((window turtle-window) (type (eql :resized)) ts data1 data2)
   ;; need to adjust the camera
 
   (format t "type: ~A, data1: ~A, data2: ~A ~%" type data1 data2)
@@ -188,7 +187,7 @@
   (gl:viewport 0 0 *width* *height*)
   )
 
-(defmethod window-event :after ((window game-window) type ts data1 data2)
+(defmethod window-event :after ((window turtle-window) type ts data1 data2)
   ;; (format t "type: ~A, data1: ~A, data2: ~A ~%" type data1 data2)
   )
 
@@ -200,7 +199,7 @@
   (sdl2:gl-set-attr :context-major-version 3)
   (sdl2:gl-set-attr :context-minor-version 3)
 
-  (make-instance 'game-window
+  (make-instance 'turtle-window
                  :title "turtle-geometry"
                  :w *width*
                  :h *height*

@@ -157,8 +157,12 @@ geometry are readily modified in many ways. |#
 
 (defun strange-poly ()
   (let* ((n 144)
-         (angle (kit.glm:deg-to-rad n)))
+         (angle (kit.glm:deg-to-rad n))
+         (colors (vector (vec4f 1.0 0.0 0.0 1.0)
+                         (vec4f 0.0 1.0 0.0 1.0)
+                         (vec4f 0.0 0.0 1.0 1.0))))
     (dotimes (x 360)
+      (color (aref colors (mod x 3)))
       (forward n)
       (right angle)
       (petal n)

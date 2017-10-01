@@ -18,15 +18,22 @@
                          :movement-speed 50.0
                          :mouse-sensitivity 0.1))
 
-(defun clear ()
+
+
+(defun clear (&key (turtle *turtle*) (line-drawer *line-drawer*))
   ;; reset turtle
   ;; reset line-drawer
   ;; reset camera
-  (setf *turtle* (-> *turtle*
-                     (with :position (vec3f 0.0 0.0 0.0))
-                     (with :rotation (vec3f 0.0 0.0 0.0)))
-        *camera* (make-init-camera)
-        *line-drawer* (make-line-drawer (get-program "line"))))
+  (let ((array (make-instance 'gl-dynamic-array :array-type :float
+                                                :capacity 10000
+                                                :multiplier 10)))
+
+    (add-turtle-data array turtle)
+    (with-slots (num-vertices draw-array) line-drawer
+      (setf *turtle* (make-turtle :color (vec4f 0.0 0.0 0.0 1.0))
+            *camera* (make-init-camera)
+            num-vertices 1
+            draw-array array))))
 
 (defun pen-toggle ()
   (includef *turtle* :pen-down-p (not (@ *turtle* :pen-down-p))))
