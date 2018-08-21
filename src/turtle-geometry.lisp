@@ -14,11 +14,7 @@
     (set-program-matrices (get-program "line") :projection matrix)))
 
 (defun make-init-camera ()
-  (make-instance 'camera :position (vec3f 0.0 0.0 100.0)
-                         :movement-speed 50.0
-                         :mouse-sensitivity 0.1))
-
-
+  (make-instance 'camera))
 
 (defun clear (&key (turtle *turtle*) (line-drawer *line-drawer*))
   ;; reset turtle

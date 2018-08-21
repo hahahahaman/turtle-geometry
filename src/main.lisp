@@ -62,7 +62,6 @@
 
 (defupdate update 200.0)
 
-
 (defun handle-camera-input ()
   (when (key-pressed-p :scancode-lctrl)
     (when *cursor-callback-p*
@@ -127,10 +126,22 @@
                                     (cos (kit.glm:deg-to-rad
                                           pitch)))))))))))
 
-  (when (key-pressed-p :scancode-e)
-    (with-slots (yaw pitch front) *camera*
-      (format t "~A ~A ~A~%" front yaw pitch)))
-  
+  ;; camera info
+  (when (key-pressed-p :scancode-c)
+    (with-slots (yaw pitch front movement-speed) *camera*
+      (format t "front-vec: ~A~%yaw: ~A~%pitch: ~A~%movement-speed: ~A~%"
+              front yaw pitch movement-speed)))
+
+  ;; movement-speed
+  (when (key-pressed-p :scancode-z)
+    (with-slots (movement-speed) *camera*
+      (incf movement-speed -5.0)
+      (format t "Decreasing camera speed to: ~A~%" movement-speed)))
+
+  (when (key-pressed-p :scancode-x)
+    (with-slots (movement-speed) *camera*
+      (incf movement-speed 5.0)
+      (format t "Increasing camera speed to: ~A~%" movement-speed)))
 
   (when (key-pressed-p :scancode-escape)
     (close-window window))

@@ -15,6 +15,30 @@ commands are inputted.
 
 `shapes.lisp` stores code from the book.
 
+Hotkeys in `main.lisp`:
+
+```
+
+ESC - quit
+
+LALT+r - clear
+
+LCTRL+MOUSE - change camera direction
+
+LCTRL+{W,A,S,D} - move up, down, left, right
+
+LCTRL+MOUSE_WHEEL - zoom in and out
+
+LSHIFT+TAB - get camera to face the turtle
+
+Z - decrease camera speed
+
+X - increase camera speed
+
+C - get camera info
+
+```
+
 #### License
 
 [MIT](LICENSE)

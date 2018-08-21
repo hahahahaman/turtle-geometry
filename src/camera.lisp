@@ -41,13 +41,13 @@
     :reader zoom
     :initarg :zoom))
   (:default-initargs
-   :position (vec3f 0.0 0.0 0.0)
+   :position (vec3f 0.0 0.0 100.0)
    :front (vec3f 0.0 0.0 -1.0)
    :world-up (vec3f 0.0 1.0 0.0)
    :yaw -90.0
    :pitch 0.0
-   :movement-speed 3.0
-   :mouse-sensitivity 0.30
+   :movement-speed 100.0
+   :mouse-sensitivity 0.15
    :zoom 45.0))
 
 (defmethod initialize-instance :after ((cam camera) &key)
