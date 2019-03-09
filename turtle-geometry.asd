@@ -28,7 +28,7 @@
                (:file "vec") ;; optimized vector class
                (:file "gl-dynamic-array") ;; dynamic array implementation for gl-arrays
                (:file "utils") ;; utility functions
-               (:file "event") ;; events are (priority . function) cons, can be destructive
+               ;; (:file "event") ;; events are (priority . function) cons, can be destructive
                (:file "input") ;; functions to handle inputs values that are in global vars
                (:file "camera") ;; object that handles camera movement
 
