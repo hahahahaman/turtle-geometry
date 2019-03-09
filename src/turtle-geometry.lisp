@@ -4,15 +4,6 @@
 
 ;;; "turtle-geometry" goes here. Hacks and glory await!
 
-(defun update-program-matrices ()
-  (let ((matrix (kit.glm:perspective-matrix
-                 (kit.glm:deg-to-rad (zoom *camera*))
-                 (/ *width* *height*)
-                 0.1
-                 10000.0)))
-    (set-program-matrices (get-program "turtle") :projection matrix)
-    (set-program-matrices (get-program "line") :projection matrix)))
-
 (defun make-init-camera ()
   (make-instance 'camera))
 

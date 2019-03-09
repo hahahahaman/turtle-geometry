@@ -62,6 +62,15 @@
 
 (defupdate update 200.0)
 
+(defun update-program-matrices ()
+  (let ((matrix (kit.glm:perspective-matrix
+                 (kit.glm:deg-to-rad (zoom *camera*))
+                 (/ *width* *height*)
+                 0.1
+                 10000.0)))
+    (set-program-matrices (get-program "turtle") :projection matrix)
+    (set-program-matrices (get-program "line") :projection matrix)))
+
 (defun handle-camera-input ()
   (when (key-pressed-p :scancode-lctrl)
     (when *cursor-callback-p*

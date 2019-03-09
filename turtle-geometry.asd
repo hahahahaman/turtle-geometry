@@ -21,24 +21,30 @@
   :serial t
   :pathname "src/"
   :components ((:file "package")
-               (:file "globals")
-               (:file "timer")
-               (:file "vec")
-               (:file "gl-dynamic-array")
-               (:file "utils")
-               (:file "event")
-               (:file "input")
-               (:file "program")
-               (:file "resource-manager")
-               (:file "program-manager")
-               (:file "turtle")
-               (:file "drawer")
-               (:file "line-drawer")
-               (:file "turtle-drawer")
-               (:file "camera")
-               (:file "turtle-geometry")
-               (:file "shapes")
-               (:file "main")))
+
+               ;; Utilities
+               (:file "globals") ;; global variables
+               (:file "timer") ;; timer class
+               (:file "vec") ;; optimized vector class
+               (:file "gl-dynamic-array") ;; dynamic array implementation for gl-arrays
+               (:file "utils") ;; utility functions
+               (:file "event") ;; events are (priority . function) cons, can be destructive
+               (:file "input") ;; functions to handle inputs values that are in global vars
+               (:file "camera") ;; object that handles camera movement
+
+               ;; GL
+               (:file "program") ;; shader program
+               (:file "resource-manager") ;; base class for managers
+               (:file "program-manager") ;; handles all shader programs
+
+               ;; Turtle geometry
+               (:file "drawer") ;; base drawer class
+               (:file "line-drawer") ;; store vertices and draws the lines
+               (:file "turtle-drawer") ;; draws an object that represents the turtle
+               (:file "turtle") ;; immutable map that stores drawing attributes
+               (:file "turtle-geometry") ;; defines the turtle operations
+               (:file "shapes") ;; misc. functions that draw shapes
+               (:file "main"))) ;; makes the window
 
 (asdf:defsystem #:turtle-geometry.tests
   :description "turtle-geometry.tests"
