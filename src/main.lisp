@@ -98,7 +98,7 @@
 
   (update)
 
-  (update-events)
+  ;; (update-events)
   (update-globals))
 
 (defmethod keyboard-event ((window turtle-window) state ts repeat-p keysym)

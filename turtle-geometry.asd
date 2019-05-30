@@ -42,7 +42,7 @@
                (:file "line-drawer") ;; store vertices and draws the lines
                (:file "turtle-drawer") ;; draws an object that represents the turtle
                (:file "turtle") ;; immutable map that stores drawing attributes
-               (:file "turtle-geometry") ;; defines the turtle operations
+               (:file "turtle-commands") ;; defines the turtle operations
                (:file "shapes") ;; misc. functions that draw shapes
                (:file "main"))) ;; makes the window
 
