@@ -1,0 +1,7 @@
+* add ability to create multiple turtles
+* change camera movement to something like blender
+first person camera interface is too cumbersome.
+* add physics simulation
+F = ma 
+
+movement to start and other interesting concepts later.
