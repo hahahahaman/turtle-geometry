@@ -110,16 +110,17 @@ Hotkeys in `main.lisp`:
 
 #### Ideas
 
-In *Mindstorms*, Papert presents the idea of microworlds, which
-resonate me as a compelling way to interact with mathematical
-behavior. I am particularly interest in the connection between
-building a idealized thought experiment in the mind vs. the machine.
-Thought experiments
+In the book *Mindstorms*, Papert presents the idea of microworlds,
+which resonates with me as a compelling way to interact with
+mathematical behavior. I am particularly interested in the connection
+between building a idealized thought experiment in the mind vs. the
+machine. Thought experiments
 ([Gedankenexperiment](https://en.wikipedia.org/wiki/Thought_experiment))
 are typically used in physics in order to reason about nature. The
 idea of microworlds is similar, in that it tries to distill and
 elaborate upon a important feature of a system, but the act of
-creation used to build a microworld seems to give resonating nuance.
+creation used to build a microworld seems to give the idea a powerful
+nuance.
 
 ##### Turtle
 
