@@ -7,22 +7,22 @@
 (defun make-init-camera ()
   (make-instance 'camera))
 
-(defun clear (&key (turtle *turtle*) (line-drawer *line-drawer*))
+(defun clear (&key (line-drawer *line-drawer*))
   ;; reset turtle
   ;; reset line-drawer
   ;; reset camera
   (let ((array (make-instance 'gl-dynamic-array :array-type :float
                                                 :capacity 10000
                                                 :multiplier 10)))
-
-    (add-turtle-data array turtle)
     (with-slots (num-vertices draw-array) line-drawer
       (setf *turtle* (make-turtle :color (vec4f 0.0 0.0 0.0 1.0))
             *camera* (make-init-camera)
             num-vertices 1
-            draw-array array))))
-(defun clr (&key (turtle *turtle*) (line-drawer *line-drawer*))
-  (clear :turtle turtle :line-drawer line-drawer))
+            draw-array array))
+    (add-turtle-data array *turtle*)))
+
+(defun clr (&key (line-drawer *line-drawer*))
+  (clear :line-drawer line-drawer))
 
 (defun pen-toggle ()
   (includef *turtle* :pen-down-p (not (@ *turtle* :pen-down-p))))
