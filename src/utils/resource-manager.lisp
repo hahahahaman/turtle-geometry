@@ -19,7 +19,7 @@
 (defmethod initialize-instance :after ((manager resource-manager) &key)
   t)
 
-(defmethod get-resource (name (manager resource-manager)) 
+(defmethod get-resource (name (manager resource-manager))
   (@ (resources manager) name))
 
 (defmethod load-resource (name resource (manager resource-manager))

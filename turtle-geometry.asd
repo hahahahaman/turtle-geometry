@@ -23,28 +23,64 @@
   :components ((:file "package")
 
                ;; Utilities
-               (:file "globals") ;; global variables
-               (:file "timer") ;; timer class
-               (:file "vec") ;; optimized vector class
-               (:file "gl-dynamic-array") ;; dynamic array implementation for gl-arrays
-               (:file "utils") ;; utility functions
-               ;; (:file "event") ;; events are (priority . function) cons, can be destructive
-               (:file "input") ;; functions to handle inputs values that are in global vars
-               (:file "camera") ;; object that handles camera movement
+               (:module utils
+                :components (
+                             ;; global variables
+                             (:file "globals")
 
-               ;; GL
-               (:file "program") ;; shader program
-               (:file "resource-manager") ;; base class for managers
-               (:file "program-manager") ;; handles all shader programs
+                             ;; timer class
+                             (:file "timer")
+
+                             ;; optimized vector classese
+                             (:file "vec")
+
+                             ;; dynamic array implementation for gl-arrays
+                             (:file "gl-dynamic-array")
+
+                             ;; utility functions
+                             (:file "utils")
+
+                             ;; functions to handle inputs values that are in global vars
+                             (:file "input")
+
+                             ;; gl shader program
+                             (:file "program")
+
+                             ;; base class for managers
+                             (:file "resource-manager")
+
+                             ;; handles all shader programs
+                             (:file "program-manager")))
+               ;; (:file "event") ;; events are (priority . function) cons, can be destructive
+
+
+               (:module camera
+                :components (;; object that represents the camera
+                             (:file "camera")))
+
+               (:module drawer
+                :components (;; base drawer class
+                             (:file "drawer")
+
+                             ;; store vertices and draws the lines
+                             (:file "line-drawer")
+
+                             ;; draws an object that represents the turtle
+                             (:file "turtle-drawer")))
 
                ;; Turtle geometry
-               (:file "drawer") ;; base drawer class
-               (:file "line-drawer") ;; store vertices and draws the lines
-               (:file "turtle-drawer") ;; draws an object that represents the turtle
-               (:file "turtle") ;; immutable map that stores drawing attributes
-               (:file "turtle-commands") ;; defines the turtle operations
-               (:file "shapes") ;; misc. functions that draw shapes
-               (:file "main"))) ;; makes the window
+               (:module turtle
+                :components (;; object that represents the turtle
+                             (:file "turtle")
+
+                             ;; defines the turtle operations
+                             (:file "turtle-commands")
+
+                             ;; misc. functions that draw shapes
+                             (:file "shapes")))
+
+               ;; makes the window
+               (:file "main")))
 
 (asdf:defsystem #:turtle-geometry.tests
   :description "turtle-geometry.tests"
