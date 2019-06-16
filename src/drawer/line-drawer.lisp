@@ -46,10 +46,15 @@
 
     (with-slots (gl-array array-size) draw-array
       ;; (print gl-array)
-      (gl:buffer-data :array-buffer :dynamic-draw gl-array
-                                    :size (gl-dyn-array-byte-size draw-array)))
+      (gl:buffer-data :array-buffer
+                      :stream-draw
+                      gl-array
+                      :size (gl-dyn-array-byte-size draw-array)))
 
     (gl:draw-arrays :line-strip 0 num-vertices)
+
+    (gl:disable-vertex-attrib-array 0)
+    (gl:disable-vertex-attrib-array 1)
 
     (gl:bind-buffer :array-buffer 0)
     (gl:bind-vertex-array 0)))

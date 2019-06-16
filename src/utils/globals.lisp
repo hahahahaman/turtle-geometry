@@ -66,25 +66,26 @@ input
 time-travel
 |#
 
-(defenum:defenum *enum-time-travel-state* ((+time-play+ 0)
-                                           +time-paused+
-                                           +time-rewind+
-                                           +time-forward+))
+;; (defenum:defenum *enum-time-travel-state*
+;;     ((+time-play+ 0)
+;;      +time-paused+
+;;      +time-rewind+
+;;      +time-forward+))
 
-(defglobal *time-travel-state* +time-play+)
-(defglobal *current-frame* 0)
-(defglobal *max-frame-index* 0)
-(defglobal *timeline*
-    (make-array 500000 :element-type 'list
-                       :initial-element nil
-                       :adjustable t
-                       :fill-pointer 0))
+;; (defglobal *time-travel-state* +time-play+)
+;; (defglobal *current-frame* 0)
+;; (defglobal *max-frame-index* 0)
+;; (defglobal *timeline*
+;;     (make-array 500000 :element-type 'list
+;;                        :initial-element nil
+;;                        :adjustable t
+;;                        :fill-pointer 0))
 
-(defglobal *tracked-vars* nil)
+;; (defglobal *tracked-vars* nil)
 
-;;; rewind and fast-forward
-(defglobal *time-speed-multiplier* (vector 1 2 4 8 16 32))
-(defglobal *time-speed-index* 0)
+;; ;;; rewind and fast-forward
+;; (defglobal *time-speed-multiplier* (vector 1 2 4 8 16 32))
+;; (defglobal *time-speed-index* 0)
 
 #|
 events
@@ -121,7 +122,7 @@ drawer
 entity
 |#
 
-(defglobal *entities* (empty-map))
+;; (defglobal *entities* (empty-map))
 
 #|
 file tracking
@@ -149,6 +150,7 @@ keep track of vec types that have been defined
 (defglobal *font-directory* (cl-fad:merge-pathnames-as-directory
                              *project-directory* (pathname "data/fonts/")))
 
-(defglobal *turtle* (empty-map))
+(defglobal *world* (make-world))
+(defglobal *turtle*)
 (defglobal *turtle-drawer*)
 (defglobal *line-drawer*)

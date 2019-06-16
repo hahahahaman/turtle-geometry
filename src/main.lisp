@@ -7,8 +7,7 @@
 
 (defun init-turtle-geometry ()
   (init-managers)
-  (setf *turtle* (make-turtle :color (vec4f 0.0 0.0 0.0 1.0))
-        *camera* (make-init-camera))
+  (setf *camera* (make-init-camera))
   (let ((line-program (make-program
                        (file-pathname *shader-directory* "line.v.glsl")
                        (file-pathname *shader-directory* "line.f.glsl")))
@@ -28,7 +27,13 @@
     (load-program "line" line-program)
 
     (set-program-matrices turtle-program :projection perspective-matrix)
-    (set-program-matrices line-program :projection perspective-matrix)))
+    (set-program-matrices line-program :projection perspective-matrix))
+
+  ;; qua entity component system
+  (clear-world *world*)
+  (let ((message-sys (make-instance 'turtle-message-system))
+        (newt-sys (make-instance 'newtonian-system)))
+    (add-systems *world* message-sys newt-sys)))
 
 (defmethod initialize-instance :after ((w turtle-window) &key &allow-other-keys)
   (setf (kit.sdl2:idle-render w) t)
@@ -41,9 +46,9 @@
   (gl:clear :color-buffer-bit :depth-buffer-bit)
   (format t "Turtle window initialized.~%"))
 
-(defrender render-lines 200.0
+(defrender render-objects 200.0
   ;; (gl:line-width 1.0)
-  (gl:enable :line-smooth)
+  ;; (gl:enable :line-smooth)
   (gl:enable :blend :depth-test)
   (gl:blend-func :src-alpha :one-minus-src-alpha)
   (gl:clear-color 1.0 1.0 1.0 1.0)
@@ -60,7 +65,8 @@
                  :rotation rotation
                  :draw-mode :triangle-fan)))
 
-(defupdate update 200.0)
+(defupdate update 200.0
+  (update *world* *dt*))
 
 (defun update-program-matrices ()
   (let ((matrix (kit.glm:perspective-matrix
@@ -94,7 +100,7 @@
 
 (defmethod render ((window turtle-window))
   (handle-camera-input)
-  (render-lines)
+  (render-objects)
 
   (update)
 
@@ -220,7 +226,7 @@
   (sdl2:gl-set-attr :context-minor-version 3)
 
   (make-instance 'turtle-window
-                 :title "turtle-geometry"
+                 :title "Thinking about calculus."
                  :w *width*
                  :h *height*
                  :resizable t))

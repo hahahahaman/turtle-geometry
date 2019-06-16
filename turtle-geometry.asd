@@ -7,9 +7,9 @@
   :depends-on (#:alexandria
                #:bordeaux-threads
                #:iterate
-               #:cl-fad
+               #:cl-fad ;; pathname library
                #:cl-opengl
-               #:fset
+               ;; #:fset
                #:glkit
                #:sdl2
                #:sdl2-ttf
@@ -17,7 +17,9 @@
                #:trivial-garbage
                #:trivial-main-thread
                #:defenum
-               #:ironclad)
+               ;; #:ironclad
+               #:qua ;; entity component system
+               )
   :serial t
   :pathname "src/"
   :components ((:file "package")

@@ -258,17 +258,17 @@ Remember to free gl-array afterwards."
 ;;; md5
 ;;;
 
-(defun md5 (str)
-  "=> CHECKSUM (STRING)
-Returns the md5 checksum of STR."
-  (ironclad:byte-array-to-hex-string
-   (ironclad:digest-sequence :md5
-                             (ironclad:ascii-string-to-byte-array str))))
+;; (defun md5 (str)
+;;   "=> CHECKSUM (STRING)
+;; Returns the md5 checksum of STR."
+;;   (ironclad:byte-array-to-hex-string
+;;    (ironclad:digest-sequence :md5
+;;                              (ironclad:ascii-string-to-byte-array str))))
 
-(defun valid-checksum-p (checksum other-checksum)
-  "=> BOOLEAN
-Checks if two checksums are equal."
-  (string= checksum other-checksum))
+;; (defun valid-checksum-p (checksum other-checksum)
+;;   "=> BOOLEAN
+;; Checks if two checksums are equal."
+;;   (string= checksum other-checksum))
 
 ;;;
 ;;; some math
