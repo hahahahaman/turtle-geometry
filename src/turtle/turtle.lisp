@@ -1,17 +1,17 @@
 (in-package #:turtle-geometry)
 
 (defstruct orientation-component
-  ((position (vec3f) :type vec3f)
-   (rotation (vec3f) :type vec3f)))
+  (position (vec3f 0.0) :type vec3f)
+  (rotation (vec3f 0.0) :type vec3f))
 (defstruct turtle-component
-  ((color (vec4f) :type vec4f)
-   (pen-down-p t :type boolean)))
+  (color (vec4f 0.0) :type vec4f)
+  (pen-down-p t :type boolean))
 
 ;; keeps track of velocity and force in the forward direction
 (defstruct newtonian-component
-  ((velocity 0.0 :type single-float)
-   (mass 0.0 :type single-float)
-   (force 0.0 :type single-float)))
+  (velocity 0.0 :type single-float)
+  (mass 0.0 :type single-float)
+  (force 0.0 :type single-float))
 
 ;; (defenum:defenum *turtle-message-types*
 ;;     ((+turtle-move+ :turtle-move)
@@ -21,30 +21,33 @@
 ;;   (type +turtle-move+ :type keyword)
 ;;   (fn (lambda ()) :type function))
 
+;; a message is a function which takes parameters WORLD and ENTITY-ID
 (defcomponent turtle-message-component (message-list))
 
 (defun make-turtle (&key
                       (position (vec3f 0.0 0.0 0.0))
                       (rotation (vec3f 0.0 0.0 0.0))
-                      (color (vec4f 1.0 1.0 1.0 1.0))
+                      (color (vec4f 1.0 0.0 1.0 1.0))
                       (pen-down-p t)
                       (world *world*))
   "Create a turtle entity. Return entity id."
   (let ((e (make-entity world))
-        (turtle-component (make-instance 'turtle-component
-                                         :position position
-                                         :rotation rotation
-                                         :color color
-                                         :pen-down-p pen-down-p)))
-    (add-component world e turtle-component)
+        (ori (make-orientation-component
+              :position position
+              :rotation rotation))
+        (turt (make-turtle-component
+               :color color
+               :pen-down-p pen-down-p)))
+    (add-components world e ori turt)
+    (setf *turtle* e)
     e))
 
-(defun add-turtle-data (world id)
+(defun add-turtle-data (array &key(world *world*) (id *turtle*))
   "Adds the turtle's current position and color to a gl-dynamic-array."
-  (iter (for i in-vector (@ turtle :position))
-    (gl-dyn-push array i))
-  (iter (for i in-vector (@ turtle :color))
-    (gl-dyn-push array i))
+  ;; (iter (for i in-vector (@ turtle :position))
+  ;;   (gl-dyn-push array i))
+  ;; (iter (for i in-vector (@ turtle :color))
+  ;;   (gl-dyn-push array i))
   array)
 
 (defsystem turtle-message-system (turtle-message-component))
@@ -57,7 +60,7 @@
       ;; loop through all messages
       (iter (for message in message-list)
         (let ((message-type (type-of message)))
-          (cond ((= message-type 'function)
+          (cond ((equal message-type 'function)
                  (funcall message world entity-id))
                 (t
                  (warn "Sent entity ~a an invalid message type ~a~%"
@@ -77,7 +80,18 @@
                          0.0
                          (/ force mass))))
           ;; semi-implicit euler integration
-          (incf vel (* accel dt))
+          (incf velocity (* accel dt))
           (setf pos (vec3f+ pos
-                            (kit.glm:matrix*vec3 (vec3f 0.0 (* vel dt) 0.0)
+                            (kit.glm:matrix*vec3 (vec3f 0.0 (* velocity dt) 0.0)
                                                  (kit.glm:rotate rot)))))))))
+
+(defsystem turtle-drawer-system (orientation-component turtle-component))
+
+(defmethod update-system ((world world) (system turtle-drawer-system) dt)
+  (system-do-with-components ((ori orientation-component) (turt turtle-component))
+      world system id
+    (with-slots ((pos position) (rot rotation)) ori
+      (with-slots (color) turt
+        (turtle-draw :position pos
+                     :rotation rot
+                     :color color)))))

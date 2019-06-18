@@ -4,7 +4,7 @@
   ())
 
 (defun load-program (name resource &optional (manager *program-manager*))
-  (let ((program (@ (resources manager) name)))
+  (let ((program (gethash name (resources manager))))
     (when program
       (gl:delete-program (id program))))
   (load-resource name resource manager))
@@ -13,6 +13,5 @@
   (get-resource name manager))
 
 (defmethod clear-resources ((manager program-manager))
-  (do-map (name resource (resources manager))
-    (declare (ignore name))
+  (iter (for (name resource) in-hashtable (resources manager))
     (gl:delete-program (id resource))))

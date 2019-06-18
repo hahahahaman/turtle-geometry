@@ -7,7 +7,7 @@
 
 (defun init-turtle-geometry ()
   (init-managers)
-  (setf *camera* (make-init-camera))
+  (setf *camera* (make-instance 'camera))
   (let ((line-program (make-program
                        (file-pathname *shader-directory* "line.v.glsl")
                        (file-pathname *shader-directory* "line.f.glsl")))
@@ -30,10 +30,10 @@
     (set-program-matrices line-program :projection perspective-matrix))
 
   ;; qua entity component system
-  (clear-world *world*)
   (let ((message-sys (make-instance 'turtle-message-system))
-        (newt-sys (make-instance 'newtonian-system)))
-    (add-systems *world* message-sys newt-sys)))
+        (newt-sys (make-instance 'newtonian-system))
+        (draw-sys (make-instance 'turtle-drawer-system)))
+    (add-systems *world* message-sys newt-sys draw-sys)))
 
 (defmethod initialize-instance :after ((w turtle-window) &key &allow-other-keys)
   (setf (kit.sdl2:idle-render w) t)
@@ -48,7 +48,7 @@
 
 (defrender render-objects 200.0
   ;; (gl:line-width 1.0)
-  ;; (gl:enable :line-smooth)
+  (gl:enable :line-smooth)
   (gl:enable :blend :depth-test)
   (gl:blend-func :src-alpha :one-minus-src-alpha)
   (gl:clear-color 1.0 1.0 1.0 1.0)
@@ -56,17 +56,18 @@
 
   (line-draw)
 
-  (let ((pos (@ *turtle* :position))
-        (color (@ *turtle* :color))
-        (rotation (@ *turtle* :rotation)))
-    (turtle-draw :position pos
-                 ;; :size (vec3f 2.0 2.0 2.0)
-                 :color color
-                 :rotation rotation
-                 :draw-mode :triangle-fan)))
+  ;; (let ((pos (@ *turtle* :position))
+  ;;       (color (@ *turtle* :color))
+  ;;       (rotation (@ *turtle* :rotation)))
+  ;;   (turtle-draw :position pos
+  ;;                ;; :size (vec3f 2.0 2.0 2.0)
+  ;;                :color color
+  ;;                :rotation rotation
+  ;;                :draw-mode :triangle-fan))
+  )
 
 (defupdate update 200.0
-  (update *world* *dt*))
+  (update-world *world* *dt*))
 
 (defun update-program-matrices ()
   (let ((matrix (kit.glm:perspective-matrix
@@ -122,24 +123,28 @@
 
 
   ;; get camera to directly face the turtle
-  (when (and (key-pressed-p :scancode-tab)
-             (key-pressed-p :scancode-lshift))
-    (let ((tpos (@ *turtle* :position)))
-      (with-slots (position yaw pitch front) *camera*
-        (setf (x-val position) (x-val tpos)
-              (y-val position) (y-val tpos)))))
+  (when *turtle* ;; turtle not NIL
 
-  (when (key-pressed-p :scancode-tab)
-    (let ((tpos (@ *turtle* :position)))
-      (with-slots (position yaw pitch front) *camera*
-        (setf
-         front (kit.glm:normalize (vec3f- tpos position))
-         pitch (kit.glm:rad-to-deg (asin (y-val front)))
-         yaw (* (signum (z-val front))
-                (kit.glm:rad-to-deg
-                 (realpart (acos (/ (x-val front)
-                                    (cos (kit.glm:deg-to-rad
-                                          pitch)))))))))))
+    (when (and (key-pressed-p :scancode-tab)
+               (key-pressed-p :scancode-lshift))
+      (let ((tpos (orientation-component-position
+                   (get-component *world* *turtle* 'orientation-component))))
+        (with-slots (position yaw pitch front) *camera*
+          (setf (x-val position) (x-val tpos)
+                (y-val position) (y-val tpos)))))
+
+    (when (key-pressed-p :scancode-tab)
+      (let ((tpos (orientation-component-position
+                   (get-component *world* *turtle* 'orientation-component))))
+        (with-slots (position yaw pitch front) *camera*
+          (setf
+           front (kit.glm:normalize (vec3f- tpos position))
+           pitch (kit.glm:rad-to-deg (asin (y-val front)))
+           yaw (* (signum (z-val front))
+                  (kit.glm:rad-to-deg
+                   (realpart (acos (/ (x-val front)
+                                      (cos (kit.glm:deg-to-rad
+                                            pitch))))))))))))
 
   ;; camera info
   (when (key-pressed-p :scancode-c)

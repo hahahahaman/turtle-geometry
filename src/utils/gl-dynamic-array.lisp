@@ -19,8 +19,8 @@
     :reader array-type
     :initarg :array-type))
   (:default-initargs
-   :capacity 10
-   :multiplier 2
+   :capacity 1024
+   :multiplier 32
    :size 0
    :array-type :float))
 

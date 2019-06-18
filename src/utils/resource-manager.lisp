@@ -14,16 +14,16 @@
     :initarg :resources
     :accessor resources))
   (:default-initargs
-   :resources (empty-map)))
+   :resources (make-hash-table :test 'equal)))
 
 (defmethod initialize-instance :after ((manager resource-manager) &key)
   t)
 
 (defmethod get-resource (name (manager resource-manager))
-  (@ (resources manager) name))
+  (gethash name (resources manager)))
 
 (defmethod load-resource (name resource (manager resource-manager))
-  (includef (resources manager) name resource))
+  (setf (gethash name (resources manager)) resource))
 
 (defmethod clear-resources :after ((manager resource-manager))
-  (setf (resources manager) (empty-map)))
+  (clrhash (resources manager)))

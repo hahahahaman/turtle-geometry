@@ -24,10 +24,9 @@
                                                 :capacity 10000
                                                 :multiplier 10)))
 
-    (add-turtle-data array turtle)
     (make-instance 'line-drawer :program program
                                 :draw-array array
-                                :num-vertices 1)))
+                                :num-vertices 0)))
 
 (defun line-draw (&optional (drawer *line-drawer*))
   (with-slots (program vao vbo draw-array num-vertices) drawer
