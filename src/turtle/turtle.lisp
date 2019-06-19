@@ -22,37 +22,13 @@
 ;;   (fn (lambda ()) :type function))
 
 ;; a message is a function which takes parameters WORLD and ENTITY-ID
-(defcomponent turtle-message-component (message-list))
-
-(defun make-turtle (&key
-                      (position (vec3f 0.0 0.0 0.0))
-                      (rotation (vec3f 0.0 0.0 0.0))
-                      (color (vec4f 1.0 0.0 1.0 1.0))
-                      (pen-down-p t)
-                      (world *world*))
-  "Create a turtle entity. Return entity id."
-  (let ((e (make-entity world))
-        (ori (make-orientation-component
-              :position position
-              :rotation rotation))
-        (turt (make-turtle-component
-               :color color
-               :pen-down-p pen-down-p)))
-    (add-components world e ori turt)
-    (setf *turtle* e)
-    e))
-
-(defun add-turtle-data (array &key(world *world*) (id *turtle*))
-  "Adds the turtle's current position and color to a gl-dynamic-array."
-  ;; (iter (for i in-vector (@ turtle :position))
-  ;;   (gl-dyn-push array i))
-  ;; (iter (for i in-vector (@ turtle :color))
-  ;;   (gl-dyn-push array i))
-  array)
+(defstruct turtle-message-component message-list)
 
 (defsystem turtle-message-system (turtle-message-component))
 
-(defmethod update-system ((world world) (system turtle-message-system) dt)
+(defmethod update-system ((world world)
+                          (system turtle-message-system)
+                          dt)
   (system-do-with-components (turtle-message-component)
       world system entity-id
     (with-slots (message-list) turtle-message-component
@@ -69,7 +45,8 @@
       ;; clear all messages
       (setf message-list nil))))
 
-(defsystem newtonian-system (orientation-component newtonian-component))
+(defsystem newtonian-system (orientation-component
+                             newtonian-component))
 
 (defmethod update-system ((world world) (system newtonian-system) dt)
   (system-do-with-components ((ori orientation-component) (newt newtonian-component))
@@ -85,13 +62,45 @@
                             (kit.glm:matrix*vec3 (vec3f 0.0 (* velocity dt) 0.0)
                                                  (kit.glm:rotate rot)))))))))
 
-(defsystem turtle-drawer-system (orientation-component turtle-component))
+(defsystem turtle-drawer-system (orientation-component
+                                 turtle-component))
 
 (defmethod update-system ((world world) (system turtle-drawer-system) dt)
-  (system-do-with-components ((ori orientation-component) (turt turtle-component))
+  (system-do-with-components ((ori orientation-component)
+                              (turt turtle-component))
       world system id
     (with-slots ((pos position) (rot rotation)) ori
       (with-slots (color) turt
         (turtle-draw :position pos
                      :rotation rot
                      :color color)))))
+
+
+(defun make-turtle (&key
+                      (position (vec3f 0.0 0.0 0.0))
+                      (rotation (vec3f 0.0 0.0 0.0))
+                      (color (vec4f 0.5 0.0 1.0 1.0))
+                      (pen-down-p t)
+                      (world *world*))
+  "Create a turtle entity. Return entity id."
+  (let ((e (make-entity world))
+        (ori (make-orientation-component
+              :position position
+              :rotation rotation))
+        (turt (make-turtle-component
+               :color color
+               :pen-down-p pen-down-p))
+        (mess (make-turtle-message-component)))
+    (add-components world e ori turt mess)
+    (setf *turtle* e)
+    e))
+
+(defun add-turtle-data (array &key(w *world*) (id *turtle*))
+  "Adds the turtle's current position and color to a gl-dynamic-array."
+  (let ((ori (get-component w id 'orientation-component))
+        (turt (get-component w id 'turtle-component)))
+    (iter (for i in-vector (orientation-component-position ori))
+      (gl-dyn-push array i))
+    (iter (for i in-vector (turtle-component-color turt))
+      (gl-dyn-push array i)))
+  array)

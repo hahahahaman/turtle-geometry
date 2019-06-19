@@ -50,7 +50,7 @@
                       gl-array
                       :size (gl-dyn-array-byte-size draw-array)))
 
-    (gl:draw-arrays :line-strip 0 num-vertices)
+    (gl:draw-arrays :lines 0 num-vertices)
 
     (gl:disable-vertex-attrib-array 0)
     (gl:disable-vertex-attrib-array 1)

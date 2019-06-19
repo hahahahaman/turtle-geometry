@@ -76,7 +76,7 @@
                              (:file "turtle")
 
                              ;; defines the turtle operations
-                             (:file "turtle-commands")
+                             (:file "turtle-messages")
 
                              ;; misc. functions that draw shapes
                              (:file "shapes")))
