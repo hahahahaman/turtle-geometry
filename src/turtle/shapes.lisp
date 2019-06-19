@@ -1,9 +1,11 @@
 (in-package :turtle-geometry)
 
-(defun square (side-length)
-  (dotimes (x 4)
-    (forward side-length)
-    (right (/ pi 2))))
+(defun square (side-length &key (rot-dim 0))
+  (let ((rot-vec (vec3f 0.0)))
+    (setf (aref rot-vec rot-dim) pi/2)
+    (dotimes (x 4)
+      (forward side-length)
+      (turtle-rotate rot-vec))))
 
 (defun ngon (sides radius)
   (let* ((perimeter (* 2 radius pi))

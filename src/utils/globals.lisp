@@ -12,14 +12,6 @@ can be used to reset VAR to VAL."
           `((setf (getf *global-setfs* (intern (string ',var) :keyword))
                   (lambda () (setf ,var ,val))))))
 
-;;;; values of pi
-(defmacro pi/x (x)
-  (let ((name (alexandria:symbolicate 'pi/ (format nil "~A" x))))
-    `(defconstant ,name (/ pi ,x))))
-(pi/x 2)
-(pi/x 3)
-(pi/x 4)
-(pi/x 6)
 
 ;;;; misc. globals
 ;;; screen

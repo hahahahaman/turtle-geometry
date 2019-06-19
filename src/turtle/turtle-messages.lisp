@@ -23,9 +23,9 @@
 (defun send-message (message &key (w *world*) (id *turtle*))
   (if (and (is-entity-p w id)
            (has-component-p w id 'turtle-message-component))
-      (push message (turtle-message-component-message-list
-                     (ec w id
-                         'turtle-message-component)))
+      (vector-push-extend message (turtle-message-component-message-list
+                                   (ec w id
+                                       'turtle-message-component)))
       (warn "Entity ~A doesn't have a message component. Entity's existence is ~A.~%"
             id
             (is-entity-p w id))))
@@ -39,39 +39,27 @@
          (send-message (,name-suffix ,@message-args))))))
 
 
-(defun pen-toggle-message ()
+(defmessage pen-toggle ()
   (lambda (w id)
     (with-slots (pen-down-p) (ec w id 'turtle-component)
       (setf pen-down-p (not pen-down-p)))))
 
-(defun pen-down-message ()
+(defmessage pen-down ()
   (lambda (w id)
     (with-slots (pen-down-p) (ec w id 'turtle-component)
       (setf pen-down-p t))))
 
-(defun pen-up-message ()
+(defmessage pen-up ()
   (lambda (w id)
     (with-slots (pen-down-p) (ec w id 'turtle-component)
       (setf pen-down-p nil))))
 
-(defun color-message (color-vec)
+(defmessage color (color-vec)
   (lambda (w id)
     (with-slots (color) (ec w id 'turtle-component)
       (setf color color-vec))))
 
-(defun pen-toggle ()
-  (send-message (pen-toggle-message)))
-
-(defun pen-down ()
-  (send-message (pen-down-message)))
-
-(defun pen-up ()
-  (send-message (pen-up-message)))
-
-(defun color (color-vec)
-  (send-message (color-message color-vec)))
-
-(defun forward-message (distance)
+(defmessage forward (distance)
   (lambda (w id)
     (with-slots ((pos position) (rot rotation))
         (ec w id 'orientation-component)
@@ -100,9 +88,6 @@
                              :w w
                              :id id)))))))
 
-(defun forward (distance)
-  (send-message (forward-message distance)))
-
 (defun fd (d) (forward d))
 
 (defun back (dist) (forward (- dist)))
@@ -116,7 +101,7 @@
 
 (defun left (radians)
   "Rotate turtle around z-axis, which is going into the screen."
-  (turtle-turtle (vec3f 0.0 0.0 radians)))
+  (turtle-rotate (vec3f 0.0 0.0 radians)))
 
 (defun lt (r) (left r))
 
@@ -137,4 +122,3 @@
 (defun yaw (radians)
   "Rotate around z-axis."
   (turtle-rotate (vec3f 0.0 0.0 radians)))
-

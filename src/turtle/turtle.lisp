@@ -22,19 +22,19 @@
 ;;   (fn (lambda ()) :type function))
 
 ;; a message is a function which takes parameters WORLD and ENTITY-ID
-(defstruct turtle-message-component message-list)
+(defstruct turtle-message-component
+  (message-list (make-array 8 :fill-pointer 0)))
 
 (defsystem turtle-message-system (turtle-message-component))
 
 (defmethod update-system ((world world)
                           (system turtle-message-system)
                           dt)
-  (system-do-with-components (turtle-message-component)
+  (system-do-with-components ((tmc turtle-message-component))
       world system entity-id
-    (with-slots (message-list) turtle-message-component
-
+    (with-slots (message-list) tmc
       ;; loop through all messages
-      (iter (for message in message-list)
+      (iter (for message in-vector message-list)
         (let ((message-type (type-of message)))
           (cond ((equal message-type 'function)
                  (funcall message world entity-id))
@@ -43,7 +43,7 @@
                        entity-id message-type)))))
 
       ;; clear all messages
-      (setf message-list nil))))
+      (setf (fill-pointer message-list) 0))))
 
 (defsystem newtonian-system (orientation-component
                              newtonian-component))

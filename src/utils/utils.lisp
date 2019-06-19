@@ -117,12 +117,6 @@ Remember to free gl-array afterwards."
                    randy)
                randy)))))
 
-(declaim (ftype (function (real) single-float) cfloat))
-(defun cfloat (n)
-  "Coerce N to single-float. Just makes the function shorter."
-  (declare (optimize (speed 3) (safety 0)))
-  (coerce n 'single-float))
-
 (defun sizeof (type)
   "Gives to foreign-type-size of TYPE. Used with cffi stuff, like cl-opengl."
   (cffi-sys:%foreign-type-size type))
@@ -131,14 +125,29 @@ Remember to free gl-array afterwards."
   "Multiply sizeof TYPE by MULTIPLE"
   (* (sizeof type) multiple))
 
+;; (declaim (ftype (function (double-float) single-float) cfloat))
+(defun cfloat (n)
+  "Coerce N to single-float. Just makes the function shorter."
+  (declare (optimize (speed 3) (safety 0)))
+  (coerce n 'single-float))
+
+;;; values of pi
+(defmacro pi/x (x)
+  (let ((name (alexandria:symbolicate 'pi/ (format nil "~A" x))))
+    `(defconstant ,name (cfloat (/ pi ,x)))))
+(pi/x 2)
+(pi/x 3)
+(pi/x 4)
+(pi/x 6)
+
 ;;; slots
 
 (defmacro get-slot (object &rest nested-slot-names)
   "Returns a nested slot-value form."
   (iter (iter:with current = object)
-        (for s in nested-slot-names)
-        (setf current `(slot-value ,current ,s))
-        (finally (return current))))
+    (for s in nested-slot-names)
+    (setf current `(slot-value ,current ,s))
+    (finally (return current))))
 
 ;;; file io
 
