@@ -1,4 +1,4 @@
-(in-package :turtle-geometry)
+(in-package #:turtle-geometry)
 
 (defclass turtle-drawer (drawer)
   ())

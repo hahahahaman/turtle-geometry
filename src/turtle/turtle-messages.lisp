@@ -12,7 +12,7 @@
   (clear-entities *world*)
   (let ((array (make-instance 'gl-dynamic-array :array-type :float)))
     (with-slots (num-vertices draw-array) line-drawer
-      (setf *turtle* nil
+      (setf *turtle* (make-turtle)
             *camera* (make-instance 'camera)
             num-vertices 0
             draw-array array))))
@@ -20,46 +20,53 @@
 (defun clr (&key (line-drawer *line-drawer*))
   (clear :line-drawer line-drawer))
 
-(defun send-message (message &key (w *world*) (id *turtle*))
-  (if (and (is-entity-p w id)
-           (has-component-p w id 'turtle-message-component))
+(defun send-message (message &key (world *world*)
+                               (turtle *turtle*))
+  (if (and (is-entity-p world turtle)
+           (has-component-p world turtle 'turtle-message-component))
       (vector-push-extend message (turtle-message-component-message-list
-                                   (ec w id
+                                   (ec world turtle
                                        'turtle-message-component)))
       (warn "Entity ~A doesn't have a message component. Entity's existence is ~A.~%"
-            id
-            (is-entity-p w id))))
+            turtle
+            (is-entity-p world turtle))))
 
-(defmacro defmessage (name (&rest message-args) &body message-body)
-  (let ((name-suffix (alexandria:symbolicate name "-MESSAGE")))
+(defmacro defmessage ((&rest names) (&rest message-args)
+                      &body message-body)
+  (let ((message-names (iter (for name in names)
+                         (collect
+                             (alexandria:symbolicate
+                              name "-MESSAGE")))))
     `(progn
-       (defun ,name-suffix (,@message-args)
+       (defsynonym (,@message-names) (,@message-args)
          ,@message-body)
-       (defun ,name (,@message-args)
-         (send-message (,name-suffix ,@message-args))))))
+       (defsynonym (,@names) (,@message-args &key (world *world*)
+                                             (turtle *turtle*))
+         (send-message (,(car message-names) ,@message-args)
+                       :world world
+                       :turtle turtle)))))
 
-
-(defmessage pen-toggle ()
+(defmessage (pen-toggle) ()
   (lambda (w id)
     (with-slots (pen-down-p) (ec w id 'turtle-component)
       (setf pen-down-p (not pen-down-p)))))
 
-(defmessage pen-down ()
+(defmessage (pen-down) ()
   (lambda (w id)
     (with-slots (pen-down-p) (ec w id 'turtle-component)
       (setf pen-down-p t))))
 
-(defmessage pen-up ()
+(defmessage (pen-up) ()
   (lambda (w id)
     (with-slots (pen-down-p) (ec w id 'turtle-component)
       (setf pen-down-p nil))))
 
-(defmessage color (color-vec)
+(defmessage (color) (color-vec)
   (lambda (w id)
     (with-slots (color) (ec w id 'turtle-component)
       (setf color color-vec))))
 
-(defmessage forward (distance)
+(defmessage (forward fd) (distance)
   (lambda (w id)
     (with-slots ((pos position) (rot rotation))
         (ec w id 'orientation-component)
@@ -80,7 +87,6 @@
           ;; move turtle's position
           (setf pos new-pos)
 
-
           (when pen-down-p
             ;; add second point
             (incf (num-vertices *line-drawer*))
@@ -88,37 +94,36 @@
                              :w w
                              :id id)))))))
 
-(defun fd (d) (forward d))
+(defmacro def-turtle-synonym ((&rest synonyms)
+                              (&rest args)
+                              fn-call)
+  (let ((fn-extra-args (append fn-call
+                               '(:world world :turtle turtle))))
+    `(defsynonym (,@synonyms) (,@args
+                               &key
+                               (world *world*)
+                               (turtle *turtle*))
+       ,fn-extra-args)))
 
-(defun back (dist) (forward (- dist)))
+(def-turtle-synonym (back bk kcab) (distance)
+                    (fd (- distance)))
 
-(defun bk (d) (back d))
-
-(defmessage turtle-rotate (vec)
+(defmessage (turtle-rotate rot) (vec)
   (lambda (w id)
     (with-slots ((rot rotation)) (ec w id 'orientation-component)
       (setf rot (vec3f+ rot vec)))))
 
-(defun left (radians)
-  "Rotate turtle around z-axis, which is going into the screen."
-  (turtle-rotate (vec3f 0.0 0.0 radians)))
+(def-turtle-synonym (left lt) (radians)
+                    (turtle-rotate (vec3f 0.0 0.0 radians)))
 
-(defun lt (r) (left r))
+(def-turtle-synonym (right rt) (radians)
+                    (turtle-rotate (vec3f 0.0 0.0 radians)))
 
-(defun right (radians)
-  "Same as (left radians) in opposite direction."
-  (left (- radians)))
+(def-turtle-synonym (roll) (radians)
+                    (turtle-rotate (vec3f radians 0.0 0.0)))
 
-(defun rt (r) (right r))
+(def-turtle-synonym (pitch) (radians)
+                    (turtle-rotate (vec3f 0.0 radians 0.0)))
 
-(defun roll (radians)
-  "Rotate around x-axis."
-  (turtle-rotate (vec3f radians 0.0 0.0)))
-
-(defun pitch (radians)
-  "Rotate around y-axis."
-  (turtle-rotate (vec3f 0.0 radians 0.0)))
-
-(defun yaw (radians)
-  "Rotate around z-axis."
-  (turtle-rotate (vec3f 0.0 0.0 radians)))
+(def-turtle-synonym (yaw) (radians)
+                    (turtle-rotate (vec3f 0.0 0.0 radians)))

@@ -55,7 +55,6 @@
                              (:file "program-manager")))
                ;; (:file "event") ;; events are (priority . function) cons, can be destructive
 
-
                (:module camera
                 :components (;; object that represents the camera
                              (:file "camera")))

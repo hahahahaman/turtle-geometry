@@ -212,3 +212,11 @@ object. |#
 ;;                  (right angle)
 ;;                  (it side angle (1+ n)))))
 ;;       (it side angle 0))))
+
+(defun exponentials ()
+  (let* ((scale-factor 0.01)
+         (n 6)
+         (e (iter (for i from 1 to n)
+              (collect (make-turtle :position (vec3f i))))))
+    (iter (for i from 1 to 10)
+      ())))

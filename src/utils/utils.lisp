@@ -1,9 +1,9 @@
 (in-package #:turtle-geometry)
 
-(defun square (x)
-  (* x x))
-(defun cube (x)
-  (* x x x))
+;; (defun square (x)
+;;   (* x x))
+;; (defun cube (x)
+;;   (* x x x))
 
 (defun dist-mod (a b modulo)
   "Distance between A and B mod MODULO."
@@ -117,6 +117,12 @@ Remember to free gl-array afterwards."
                    randy)
                randy)))))
 
+(defun random-color (&optional (alpha (random-in-range 0.0 1.0)))
+  (vec4f (random-in-range 0.0 1.0)
+         (random-in-range 0.0 1.0)
+         (random-in-range 0.0 1.0)
+         alpha))
+
 (defun sizeof (type)
   "Gives to foreign-type-size of TYPE. Used with cffi stuff, like cl-opengl."
   (cffi-sys:%foreign-type-size type))
@@ -125,7 +131,6 @@ Remember to free gl-array afterwards."
   "Multiply sizeof TYPE by MULTIPLE"
   (* (sizeof type) multiple))
 
-;; (declaim (ftype (function (double-float) single-float) cfloat))
 (defun cfloat (n)
   "Coerce N to single-float. Just makes the function shorter."
   (declare (optimize (speed 3) (safety 0)))
@@ -134,7 +139,7 @@ Remember to free gl-array afterwards."
 ;;; values of pi
 (defmacro pi/x (x)
   (let ((name (alexandria:symbolicate 'pi/ (format nil "~A" x))))
-    `(defconstant ,name (cfloat (/ pi ,x)))))
+    `(defconstant ,name (coerce (/ pi ,x) 'single-float))))
 (pi/x 2)
 (pi/x 3)
 (pi/x 4)
@@ -451,3 +456,10 @@ Remember to free gl-array afterwards."
 LOAD-TIME-VALUE obtains the value of an object at read time, allowing for the
 usage of the rebound *STANDARD-OUTPUT* stream."
   (print object (load-time-value *standard-output*)))
+
+(defmacro defsynonym ((&rest synonyms) (&rest args) &body body)
+  `(progn
+     ,@(iter (for synonym in synonyms)
+         (collect
+             `(defun ,synonym (,@args)
+                ,@body)))))

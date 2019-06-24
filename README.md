@@ -14,8 +14,8 @@ Tested with [SBCL](http://www.sbcl.org).
 Get [quicklisp](https://www.quicklisp.org).
 
 ```
-cd quicklisp/local-projects/
-
+cd ~/quicklisp/local-projects/
+git clone https://github.com/hahahahaman/qua.git
 git clone https://github.com/hahahahaman/turtle-geometry.git
 ```
 
@@ -45,6 +45,7 @@ REPL:
 #### Commands
 
 ```common-lisp
+;; create a turtle in the world
 
 ;; movement and rotation
 (forward distance)

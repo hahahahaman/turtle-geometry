@@ -12,7 +12,6 @@ can be used to reset VAR to VAL."
           `((setf (getf *global-setfs* (intern (string ',var) :keyword))
                   (lambda () (setf ,var ,val))))))
 
-
 ;;;; misc. globals
 ;;; screen
 (defglobal *width* 800)
