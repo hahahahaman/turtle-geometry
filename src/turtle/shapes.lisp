@@ -1,6 +1,6 @@
 (in-package :turtle-geometry)
 
-(defun square (side-length &key (rot-dim 0))
+(defun square (side-length &key (rot-dim 2))
   (let ((rot-vec (vec3f 0.0)))
     (setf (aref rot-vec rot-dim) pi/2)
     (dotimes (x 4)
@@ -8,11 +8,17 @@
       (turtle-rotate rot-vec))))
 
 (defun ngon (sides radius)
-  (let* ((perimeter (* 2 radius pi))
-         (side-length (/ perimeter sides)))
+  (let* ((center-angle (/ (* 2 pi) sides))
+         (corner-angle (/ (- pi center-angle) 2))
+         (initial-outer-angle (- pi corner-angle))
+         (subsequent-outer-angle (- pi (* 2 corner-angle))))
+    (fw radius)
+    (rt initial-outer-angle)
+    (fw )
     (dotimes (x sides)
-      (forward side-length)
-      (right (/ (* 2 pi) sides)))))
+      (pen-up)
+      (fw radius)
+      (rt center-angle))))
 
 (defun arcr (radius radians)
   (let* ((perimeter (* radius radians))
@@ -30,7 +36,7 @@
       (forward side-length)
       (left (/ radians degrees)))))
 
-(defun squiggle (l)
+(defsynonym (squiggle squi) (l)
   (forward l)
   (right (/ pi 2))
   (forward l)
@@ -55,10 +61,10 @@
 
 (defun petal (size)
   (let ((s size)
-        (angle (/ pi 3)))
+        (center-angle (/ pi 3)))
     (dotimes (x 2)
-      (arcr s angle)
-      (right (* angle 2)))))
+      (arcr s center-angle)
+      (right (* center-angle 2)))))
 
 (defun flower (size)
   (dotimes (x 6)
@@ -112,7 +118,7 @@ x^2 + 2y^2 = r^2
 
 it creates an ellipse.
 
-The notion of the pointiness of something, is expressed as the ratio of angle
+The notion of the pointiness of something, is expressed as the ratio of center-angle
 turned to distance traveled, is the intrinsic quantity that is called curvature.
 |#
 
@@ -129,24 +135,24 @@ Turtle geometry uses procedural mechanisms (like iterating) that are difficult
 to capture in traditional algebraic formalism. And these descriptions in turtle
 geometry are readily modified in many ways. |#
 
-(defun poly (side angle)
+(defun poly (side center-angle)
   (dotimes (x 360)
     (forward side)
-    (right angle)))
+    (right center-angle)))
 
-(defun newpoly (side angle)
+(defun newpoly (side center-angle)
   (dotimes (x 360)
     (forward side)
-    (right angle)
+    (right center-angle)
     (forward side)
-    (right (* angle 0.5))))
+    (right (* center-angle 0.5))))
 
-(defun newpoly1 (size angle)
+(defun newpoly1 (size center-angle)
   (dotimes (x 100)
     (square size)
-    (right angle)
+    (right center-angle)
     (ray size)
-    (right (* angle 1.6))))
+    (right (* center-angle 1.6))))
 
 (defun degree-poly (n)
   (dotimes (x 100)
@@ -159,64 +165,77 @@ geometry are readily modified in many ways. |#
 
 (defun strange-poly ()
   (let* ((n 144)
-         (angle (kit.glm:deg-to-rad n))
+         (center-angle (kit.glm:deg-to-rad n))
          (colors (vector (vec4f 1.0 0.0 0.0 1.0)
                          (vec4f 0.0 1.0 0.0 1.0)
                          (vec4f 0.0 0.0 1.0 1.0))))
     (dotimes (x 360)
       (color (aref colors (mod x 3)))
       (forward n)
-      (right angle)
+      (right center-angle)
       (petal n)
-      (right (* angle 2)))))
+      (right (* center-angle 2)))))
 
 #| Recursive definitions of shapes show a form of sameness (symmetry?) in the
 object. |#
 
-(defun recursive-poly (side angle)
+(defun recursive-poly (side center-angle)
   (let ((end 360))
     (labels ((poly-iter (n)
                (unless (= n end)
                  (forward side)
-                 (right angle)
+                 (right center-angle)
                  (poly-iter (1+ n)))))
       (poly-iter 0))))
 
 
 ;; forms an outward spiral
-(defun polyspi-side (side angle)
+(defun polyspi-side (side center-angle)
   (let ((end 50))
     (labels ((it (s a n)
                (unless (= n end)
                  (forward s)
                  (right a)
                  (it (+ s side) a (1+ n)))))
-      (it side angle 0))))
+      (it side center-angle 0))))
 
 ;; forms an inward spiral
-(defun polyspi-angle (side angle)
+(defun polyspi-angle (side center-angle)
   (let ((end 50)
         (deg1 (/ pi 180)))
-    (labels ((it (side angle n)
+    (labels ((it (side center-angle n)
                (unless (= n end)
                  (forward side)
-                 (right angle)
-                 (it side (- angle deg1) (1+ n)))))
-      (it side angle 0))))
+                 (right center-angle)
+                 (it side (- center-angle deg1) (1+ n)))))
+      (it side center-angle 0))))
 
-;; (defun polyspi (side angle)
+;; (defun polyspi (side center-angle)
 ;;   (let ((end 100))
-;;     (labels ((it (side angle n)
+;;     (labels ((it (side center-angle n)
 ;;                (unless (= n end)
 ;;                  (forward side)
-;;                  (right angle)
-;;                  (it side angle (1+ n)))))
-;;       (it side angle 0))))
+;;                  (right center-angle)
+;;                  (it side center-angle (1+ n)))))
+;;       (it side center-angle 0))))
 
 (defun exponentials ()
   (let* ((scale-factor 0.01)
          (n 6)
          (e (iter (for i from 1 to n)
-              (collect (make-turtle :position (vec3f i))))))
-    (iter (for i from 1 to 10)
-      ())))
+              (collect (make-turtle :position (vec3f i))
+                result-type vector))))
+    (iter (for j from 0 below (length e))
+      (iter (for i from 1 to 5)
+        (let ((turt (aref e j))
+              (d (* (expt i (1+ j)) scale-factor)))
+          (fw d :turtle turt)
+          (color (random-color 1.0) :turtle turt))))))
+
+(defmessage (timed-color) (interval times)
+  (lambda (w id)
+    (dotimes (x times)
+      (color (vec4f (/ x times) 0.0 0.0 1.0))
+      (lf pi/2)
+      (sleep interval))
+    (f 0) (v 0)))

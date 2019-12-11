@@ -1,10 +1,6 @@
-;;;; turtle-geometry.lisp
-
 (in-package #:turtle-geometry)
 
-;;; "turtle-geometry" goes here. Hacks and glory await!
-
-(defun clear (&key (line-drawer *line-drawer*))
+(defsynonym (clear clr) (&key (line-drawer *line-drawer*))
   ;; reset entities
   ;; reset turtle
   ;; reset line-drawer
@@ -16,9 +12,6 @@
             *camera* (make-instance 'camera)
             num-vertices 0
             draw-array array))))
-
-(defun clr (&key (line-drawer *line-drawer*))
-  (clear :line-drawer line-drawer))
 
 (defun send-message (message &key (world *world*)
                                (turtle *turtle*))
@@ -66,7 +59,7 @@
     (with-slots (color) (ec w id 'turtle-component)
       (setf color color-vec))))
 
-(defmessage (forward fd) (distance)
+(defmessage (forward fw) (distance)
   (lambda (w id)
     (with-slots ((pos position) (rot rotation))
         (ec w id 'orientation-component)
@@ -77,22 +70,14 @@
                                 (kit.glm:translate pos)
                                 (kit.glm:rotate rot))))))
 
-          (when pen-down-p
-            ;; add first point of the line
-            (incf (num-vertices *line-drawer*))
-            (add-turtle-data (draw-array *line-drawer*)
-                             :w w
-                             :id id))
+          ;; add first point of the line
+          (add-turtle-point :world w :turtle id)
 
           ;; move turtle's position
           (setf pos new-pos)
 
-          (when pen-down-p
-            ;; add second point
-            (incf (num-vertices *line-drawer*))
-            (add-turtle-data (draw-array *line-drawer*)
-                             :w w
-                             :id id)))))))
+          ;; second point
+          (add-turtle-point :world w :turtle id))))))
 
 (defmacro def-turtle-synonym ((&rest synonyms)
                               (&rest args)
@@ -106,18 +91,18 @@
        ,fn-extra-args)))
 
 (def-turtle-synonym (back bk kcab) (distance)
-                    (fd (- distance)))
+                    (fw (- distance)))
 
 (defmessage (turtle-rotate rot) (vec)
   (lambda (w id)
     (with-slots ((rot rotation)) (ec w id 'orientation-component)
       (setf rot (vec3f+ rot vec)))))
 
-(def-turtle-synonym (left lt) (radians)
+(def-turtle-synonym (left lt lf) (radians)
                     (turtle-rotate (vec3f 0.0 0.0 radians)))
 
 (def-turtle-synonym (right rt) (radians)
-                    (turtle-rotate (vec3f 0.0 0.0 radians)))
+                    (turtle-rotate (vec3f 0.0 0.0 (- radians))))
 
 (def-turtle-synonym (roll) (radians)
                     (turtle-rotate (vec3f radians 0.0 0.0)))
@@ -127,3 +112,23 @@
 
 (def-turtle-synonym (yaw) (radians)
                     (turtle-rotate (vec3f 0.0 0.0 radians)))
+
+(defmessage (velocity vel sp v) (velocity)
+  (lambda (w id)
+    (with-slots ((tvel velocity)) (ec w id 'newtonian-component)
+      (setf tvel velocity))))
+
+(defmessage (force f) (force)
+  (lambda (w id)
+    (with-slots ((tforce force)) (ec w id 'newtonian-component)
+      (setf tforce force))))
+
+(defmessage (add-force af) (force)
+  (lambda (w id)
+    (with-slots ((tforce force)) (ec w id 'newtonian-component)
+      (incf tforce force))))
+
+(defmessage (add-mass) (mass)
+  (lambda (w id)
+    (with-slots ((tmass mass)) (ec w id 'newtonian-component)
+      (incf tmass mass))))

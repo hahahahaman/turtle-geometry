@@ -49,7 +49,7 @@ REPL:
 
 ;; movement and rotation
 (forward distance)
-(fd d)
+(fw d)
 
 (back distance)
 (bk d)

@@ -48,11 +48,11 @@
   (format t "Turtle window initialized.~%"))
 
 (defrender render-objects 200.0
-  ;; (gl:line-width 1.0)
+  (gl:line-width 1.0)
   (gl:enable :line-smooth)
   (gl:enable :blend :depth-test)
   (gl:blend-func :src-alpha :one-minus-src-alpha)
-  (gl:clear-color 1.0 1.0 1.0 1.0)
+  (gl:clear-color 0.0 0.0 0.0 1.0)
   (gl:clear :color-buffer-bit :depth-buffer-bit)
 
   (line-draw)
@@ -68,7 +68,7 @@
   )
 
 (defupdate update 200.0
-  (update-world *world* *dt*))
+  (update-world *world* (/ 1.0 fps)))
 
 (defun update-program-matrices ()
   (let ((matrix (kit.glm:perspective-matrix

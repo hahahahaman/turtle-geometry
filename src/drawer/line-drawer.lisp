@@ -19,6 +19,8 @@
   (with-slots (vbo draw-array) drawer
     (trivial-garbage:finalize drawer (lambda () (gl:delete-buffers (vector vbo))))))
 
+
+
 (defun make-line-drawer (program &optional (turtle *turtle*))
   (let ((array (make-instance 'gl-dynamic-array :array-type :float
                                                 :capacity 10000

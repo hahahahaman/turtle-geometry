@@ -441,12 +441,13 @@ Remember to free gl-array afterwards."
          ,@body))))
 
 (defmacro defupdate (func-name fps &body body)
-  `(let ((update-timer (make-timer :end (/ 1.0 ,fps))))
+  `(let ((fps ,fps)
+         (update-timer (make-timer :end (/ 1.0 ,fps))))
      (defun ,func-name ()
        (timer-update update-timer)
        (iter (while (timer-ended-p update-timer))
-             (timer-keep-overflow update-timer)
-             ,@body))))
+         (timer-keep-overflow update-timer)
+         ,@body))))
 
 (defmacro run-thread (&body body)
   `(bt:make-thread (lambda () ,@body)))

@@ -1,21 +1,21 @@
 (in-package :turtle-geometry)
 
-(declaim (ftype (function (vector sequence symbol fixnum) t)
+(declaim (ftype (function (vector sequence symbol fixnum fixnum) t)
                 coerce-replace-array))
 (defun coerce-replace-array (target-array source-sequence coerce-type
                              start end)
   (cond ((vectorp source-sequence)
          (iter (for v in-vector source-sequence)
-               (for i from start below end)
-               (setf (aref target-array i) (if (typep v coerce-type)
-                                               v
-                                               (coerce v coerce-type)))))
+           (for i from start below end)
+           (setf (aref target-array i) (if (typep v coerce-type)
+                                           v
+                                           (coerce v coerce-type)))))
         ((listp source-sequence)
          (iter (for l in source-sequence)
-               (for i from start below end)
-               (setf (aref target-array i) (if (typep l coerce-type)
-                                               l
-                                               (coerce l coerce-type)))))))
+           (for i from start below end)
+           (setf (aref target-array i) (if (typep l coerce-type)
+                                           l
+                                           (coerce l coerce-type)))))))
 
 ;; original code structure from mathkit
 (defmacro define-vecn (n type &optional (suffix ""))
@@ -35,6 +35,7 @@
              ;; (vcrossproduct (vecn-suffix "-CROSS-PRODUCT"))
              (vnormalize (vecn-suffix "-NORMALIZE"))
              (vclamp (vecn-suffix "-CLAMP"))
+             (vdist (vecn-suffix "-DIST"))
              (clamptype (alexandria:symbolicate 'clamp (string-upcase suffix)))
              (new-clamptype ;; clamp function only needs to be defined once per type
                (when (null (getf *vec-types* `(',type))) ;; check if type exists already
@@ -68,50 +69,50 @@
              (defun ,v+ (v1 v2)
                (declare (optimize (speed 3) (safety 0)))
                (,vecn ,@(iter (for i from 0 below n)
-                              (collect `(+ (aref v1 ,i) (aref v2 ,i))))))
+                          (collect `(+ (aref v1 ,i) (aref v2 ,i))))))
 
              (declaim (ftype (function (,vecn ,vecn) ,vecn) ,v-))
              (defun ,v- (v1 v2)
                (declare (optimize (speed 3) (safety 0)))
                (,vecn ,@(iter (for i from 0 below n)
-                              (collect `(- (aref v1 ,i) (aref v2 ,i))))))
+                          (collect `(- (aref v1 ,i) (aref v2 ,i))))))
 
              (declaim (ftype (function (,vecn ,type) ,vecn) ,v*))
              (defun ,v* (v x)
                (declare (optimize (speed 3) (safety 0)))
                (,vecn ,@(iter (for i from 0 below n)
-                              (collect `(* (aref v ,i) x)))))
+                          (collect `(* (aref v ,i) x)))))
 
              (declaim (ftype (function (,vecn ,type) ,vecn) ,v/))
              (defun ,v/ (v x)
                (declare (optimize (speed 3) (safety 0)))
                (,vecn ,@(iter (for i from 0 below n)
-                              (collect `(/ (aref v ,i) x)))))
+                          (collect `(/ (aref v ,i) x)))))
 
              (declaim (ftype (function (,vecn ,vecn) ,vecn) ,vmul))
              (defun ,vmul (v1 v2)
                (declare (optimize (speed 3) (safety 0)))
                (,vecn ,@(iter (for i from 0 below n)
-                              (collect `(* (aref v1 ,i) (aref v2 ,i))))))
+                          (collect `(* (aref v1 ,i) (aref v2 ,i))))))
 
              (declaim (ftype (function (,vecn ,vecn) ,vecn) ,vdiv))
-             (defun ,vdiv (v n)
+             (defun ,vdiv (v1 v2)
                (declare (optimize (speed 3) (safety 0)))
                (,vecn ,@(iter (for i from 0 below n)
-                              (collect `(/ (aref v1 ,i) (aref v2 ,i))))))
+                          (collect `(/ (aref v1 ,i) (aref v2 ,i))))))
 
              (declaim (ftype (function (,vecn) float) ,vlength))
              (defun ,vlength (v)
                (declare (optimize (speed 3) (safety 0)))
                (sqrt (the ,type (iter (for x in-vector v)
-                                      (sum (* x x))
-                                      (declare (,type x))))))
+                                  (sum (* x x))
+                                  (declare (,type x))))))
 
              (declaim (ftype (function (,vecn ,vecn) float) ,vdotproduct))
              (defun ,vdotproduct (v1 v2)
                (declare (optimize (speed 3) (safety 0)))
-               (iter (for i from 0 below n)
-                     (sum (* (aref v1 i) (aref v2 i)))))
+               (iter (for i from 0 below ,n)
+                 (sum (* (aref v1 i) (aref v2 i)))))
 
              (declaim (ftype (function (,vecn) float) ,vdotproduct))
              (defun ,vnormalize (v)
@@ -120,7 +121,13 @@
              (declaim (ftype (function (,vecn ,vecn ,vecn) ,vecn) ,vclamp))
              (defun ,vclamp (value low high)
                (declare (optimize (speed 3) (safety 0)))
-               (cl:map ',vecn (function ,clamptype) value low high)))))))))
+               (cl:map ',vecn (function ,clamptype) value low high))
+
+             (declaim (ftype (function (,vecn ,vecn) number) ,vdist))
+             (defun ,vdist (v1 v2)
+               (declare (optimize (speed 3) (safety 0)))
+               (sqrt (iter (for i from 0 below ,n)
+                       (sum (expt (- (aref v1 i) (aref v2 i)) 2))))))))))))
 
 (define-vecn 2 fixnum "i")
 (define-vecn 3 fixnum "i")
